@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Metallic Silver Base -->
+    <item>
+        <shape>
+            <gradient
+                android:startColor="#CCB0B0B0"
+                android:centerColor="#99E0E0E0"
+                android:endColor="#B3909090"
+                android:angle="270" />
+
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+
+    <!-- High-Gloss Shine -->
+    <item
+        android:bottom="50dp"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp">
+
+        <shape>
+            <gradient
+                android:startColor="#80FFFFFF"
+                android:endColor="#00FFFFFF"
+                android:angle="270" />
+
+            <corners
+                android:topLeftRadius="10dp"
+                android:topRightRadius="10dp" />
+        </shape>
+    </item>
+
+    <!-- Bottom Reflection -->
+    <item android:top="80dp">
+
+        <shape>
+            <gradient
+                android:startColor="#00FFFFFF"
+                android:endColor="#26FFFFFF"
+                android:angle="270" />
+
+            <corners
+                android:bottomLeftRadius="16dp"
+                android:bottomRightRadius="16dp" />
+        </shape>
+    </item>
+
+</layer-list>

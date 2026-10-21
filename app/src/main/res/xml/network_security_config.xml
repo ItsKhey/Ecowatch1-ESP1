@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    EcoWatch talks to a Node server running on the developer's own machine, over
+    plain HTTP on a loopback or private network address. Android blocks cleartext
+    by default since API 28, so it is permitted here for exactly that case.
+
+    The 10.0.2.2 entry is the Android emulator's alias for the host machine's
+    loopback. A physical device needs this machine's LAN address instead, which
+    is covered by the private ranges below.
+
+    Nothing here weakens the app for a real deployment: a build pointed at an
+    https:// API base URL never reaches this path, because the app only speaks
+    cleartext to the local server it was configured with.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Theme-aware surface for bottom sheets.
+
+    Resolves ?attr/... against whichever theme is active, so the sheet follows
+    the app's light and dark themes instead of the fixed white-on-grey glass
+    gradient, which stayed pale in dark mode.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <gradient
+        android:angle="270"
+        android:startColor="?attr/colorSurfaceVariant"
+        android:centerColor="?attr/colorSurface"
+        android:endColor="?attr/colorSurface"
+        android:type="linear" />
+
+    <stroke
+        android:width="1dp"
+        android:color="?attr/colorOutlineVariant" />
+
+    <corners
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp"
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp" />
+</shape>

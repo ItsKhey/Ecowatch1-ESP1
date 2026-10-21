@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One row of task history.
+
+    Kept visually identical to the task card on the tasks tab so a cleaner
+    recognises the same assignment; the extra fields here are the timestamps the
+    tasks list does not show, because history is about when things happened.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:strokeColor="#06402B"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/historyStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_status_pill"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="4dp"
+                android:textColor="@color/green"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="Completed" />
+
+            <TextView
+                android:id="@+id/historyDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textColor="@color/faint_green_color"
+                android:textSize="12sp"
+                tools:text="Mar 3, 2026 10:42 AM" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/historyTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/green"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="Overflowing garbage at Block 4" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/historyCategory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/faint_green_color"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="Plastic Waste" />
+
+            <TextView
+                android:id="@+id/historyScale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_status_pill"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="10dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="2dp"
+                android:textColor="@color/green"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:text="Medium-Scale Waste" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/historyDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:alpha="0.85"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/green"
+            android:textSize="14sp"
+            tools:text="Pile of bottles beside the footpath." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/historyAssignedAt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/faint_green_color"
+                android:textSize="12sp"
+                tools:text="Assigned Mar 1, 2026" />
+
+            <TextView
+                android:id="@+id/historyAcceptedAt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/faint_green_color"
+                android:textSize="12sp"
+                tools:text="Accepted Mar 1, 2026" />
+
+            <TextView
+                android:id="@+id/historyStartedAt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/faint_green_color"
+                android:textSize="12sp"
+                tools:text="Started Mar 2, 2026" />
+
+            <TextView
+                android:id="@+id/historyCompletedAt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/faint_green_color"
+                android:textSize="12sp"
+                tools:text="Completed Mar 3, 2026" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/historyNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/green"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:alpha="0.85"
+            android:visibility="gone"
+            tools:text="Collected bottles and bags from the drain." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_inbox"
+                app:tint="@color/faint_green_color" />
+
+            <TextView
+                android:id="@+id/historyEvidenceCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:textColor="@color/faint_green_color"
+                android:textSize="12sp"
+                tools:text="Before 2 · After 2" />
+
+            <TextView
+                android:id="@+id/historyReportId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/faint_green_color"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="Report RPT-0001" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

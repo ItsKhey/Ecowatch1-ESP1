@@ -1,0 +1,220 @@
+<resources>
+    <string name="app_name">EcoWatch Personnel</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_tasks">My Tasks</string>
+    <string name="nav_alerts">Notifications</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_menu">Menu</string>
+
+    <!-- Task list -->
+    <string name="tasks_empty">No tasks to show here yet.</string>
+    <string name="tasks_empty_active">You have no active tasks right now.</string>
+    <string name="filter_all">All</string>
+    <string name="filter_active">Active</string>
+    <string name="filter_assigned">Assigned</string>
+    <string name="filter_accepted">Accepted</string>
+    <string name="filter_in_progress">In Progress</string>
+    <string name="filter_under_approval">Under Approval</string>
+    <string name="filter_completed">Completed</string>
+    <string name="filter_cancelled">Cancelled</string>
+    <string name="tasks_empty_for_approval">Nothing is waiting for approval right now.</string>
+    <!-- Chip label plus the number of tasks behind it, e.g. "Under Approval (2)". -->
+    <!-- Chip label plus the number of tasks behind it, e.g. "Under Approval (2)".
+         A format string, so it is not translated. -->
+    <string name="filter_count_format" translatable="false">%1$s (%2$d)</string>
+
+    <!-- Task history -->
+    <string name="history_title">History</string>
+    <string name="history_count_title">History (%1$d)</string>
+    <string name="history_search_hint">Search history...</string>
+    <string name="history_clear_search">Clear search</string>
+    <string name="history_sort">Change sort order</string>
+    <string name="history_sort_newest">Sorting newest first</string>
+    <string name="history_sort_oldest">Sorting oldest first</string>
+    <string name="history_empty">No tasks recorded yet.</string>
+    <string name="history_empty_filter">No tasks match this filter.</string>
+    <string name="history_empty_search">No tasks match your search.</string>
+    <string name="history_offline_notice">Showing saved tasks. Pull down to refresh.</string>
+    <string name="history_evidence_format">Before %1$d · After %2$d</string>
+    <string name="history_assigned_format">Assigned %1$s</string>
+    <string name="history_accepted_format">Accepted %1$s</string>
+    <string name="history_started_format">Started %1$s</string>
+    <string name="history_completed_format">Completed %1$s</string>
+    <string name="history_report_format">Report %1$s</string>
+
+    <!-- Settings: security and privacy -->
+    <string name="security_section_security">Security</string>
+    <string name="security_section_privacy">Privacy</string>
+    <string name="security_biometric_title">Biometric App Lock</string>
+    <string name="security_biometric_summary">Ask for a fingerprint before showing your tasks.</string>
+    <string name="security_change_password">Change Password</string>
+    <string name="security_current_password">Current Password</string>
+    <string name="security_new_password">New Password</string>
+    <string name="security_confirm_password">Confirm New Password</string>
+    <string name="security_password_length_hint">Use 8 to 72 characters. Your session stays signed in.</string>
+    <string name="security_update_password">Update Password</string>
+    <string name="security_location_privacy">Location Privacy</string>
+    <string name="security_report_photos">Cleaning Photos</string>
+    <string name="security_biometric_enabled">Biometric app lock is on.</string>
+    <string name="security_biometric_disabled">Biometric app lock is off.</string>
+    <string name="security_no_hardware">No fingerprint sensor was found on this device.</string>
+    <string name="security_not_enrolled_title">Fingerprint not registered</string>
+    <string name="security_not_enrolled_message">Register a fingerprint in your device settings first, then come back and turn this on.</string>
+    <string name="security_open_settings">Open settings</string>
+    <string name="security_biometric_unavailable">Biometric authentication is unavailable on this device right now.</string>
+    <string name="security_confirm_password_title">Confirm your password</string>
+    <string name="security_confirm_password_message">Enter your account password to register a fingerprint on this device. This is asked once, at registration.</string>
+    <string name="security_confirm_password_field">Password</string>
+    <string name="security_confirm">Confirm</string>
+    <string name="security_register_message">Scan your fingerprint to register it for this account.</string>
+    <string name="security_fingerprint_login">Sign in with fingerprint</string>
+    <string name="security_fingerprint_login_title">Fingerprint Login</string>
+    <string name="security_fingerprint_login_subtitle">Confirm your fingerprint to open EcoWatch Personnel.</string>
+    <string name="security_fingerprint_login_for">Signing in as %1$s. Confirm your fingerprint.</string>
+    <string name="security_location_privacy_message">EcoWatch never asks this app for your location. The coordinates you see on a task belong to the report a resident filed, and they are used so you can find the reported spot and upload the right photos.</string>
+    <string name="security_report_photos_message">Before and after photos are attached to the assignment so an administrator can review the cleanup. They are visible to your administrators and are never posted publicly.</string>
+
+    <!-- Settings: menu rows -->
+    <string name="settings_section_account">Account</string>
+    <string name="settings_section_preferences">Preferences</string>
+    <string name="settings_section_support">Support</string>
+    <string name="settings_account_details">Account Details</string>
+    <string name="settings_task_history">History</string>
+    <string name="settings_security_privacy">Security &amp; Privacy</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_help_center">Help Center</string>
+    <string name="settings_terms">Terms &amp; Policies</string>
+    <string name="settings_about_us">About Us</string>
+    <string name="settings_log_out">Log out</string>
+    <string name="settings_theme_dialog_title">Select Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_got_it">Got it</string>
+
+    <!-- Settings: help and terms -->
+    <string name="settings_help_title">Help Center</string>
+    <string name="settings_help_message">How to use EcoWatch Personnel\n\n1. Accept a task from My Tasks as soon as you can, so residents know it is being handled.\n2. Upload at least one Before Cleaning photo, then tap Start Cleaning.\n3. Add an After Cleaning photo and tap Mark as Completed. An administrator reviews the cleanup afterwards.\n4. Task History keeps every assignment this account has received, so you can check what is still open.\n\nIf the server cannot be reached, check that you are on the same network as the server and that the address in Server settings is still correct.</string>
+    <string name="settings_terms_title">Terms &amp; Policies</string>
+    <string name="settings_terms_message">Terms of use\n\n- Use this app only for cleaning work you have been assigned by an administrator.\n- Before and after photos must show the area you were asked to clean. Do not upload photos of people, homes or number plates.\n- Task locations and photos are visible to EcoWatch administrators and are never published.\n- Do not share your account or let anyone else use your signed-in device.\n\nPrivacy\n\nEcoWatch stores your account details, your assignments and the photos you upload. It does not collect your location, your contacts or your browsing history.</string>
+
+    <!-- About -->
+    <string name="about_title">About Us</string>
+    <string name="about_body">About EcoWatch Personnel\n\nEcoWatch Personnel is the companion app for the waste-management personnel who carry out the cleanups residents report through EcoWatch. It is the field half of one system: residents file reports, administrators review and assign them, and this app is where the assigned cleaner accepts the task, photographs the area before and after, and submits the work for approval.\n\nEvery assignment in this app comes from a resident report. Nothing here is entered by hand, so a task always names the place and the problem a resident described.\n\nWhat you can do here\n\nReceive every assignment\nAdministrators assign reported problems to the cleaners who cover that area. All of your assignments appear in My Tasks, and Task History keeps the ones that have moved on.\n\nAccept and track work\nA task moves from Assigned to Accepted to In Progress to Completed. Each step is recorded with a timestamp, so the history shows exactly when the work was picked up and when it was finished.\n\nProve the cleanup\nBefore and after photos are required. The before photo documents the reported problem; the after photo shows what your team did about it. An administrator reviews both before closing the task, and residents can see when their report is resolved.\n\nStay on top of assignments\nThe app tells you when you are given new work, and when a task you completed has been approved, so you are not left guessing.\n\nKeep your own record\nTask History stores every assignment on this device. You can look up what you worked on, when you worked on it and what you submitted, even without a connection.\n\nOur purpose\n\nEcoWatch exists to make community cleanups visible and accountable. Residents report, personnel clean, administrators verify. See it. Report it. Clean it. Prove it.</string>
+
+    <!-- Task detail -->
+    <string name="task_detail_title">Task Details</string>
+    <string name="task_back">Back</string>
+    <string name="task_status_placeholder">Assigned</string>
+    <string name="task_progress_section">Progress</string>
+    <string name="admin_note_section">Note from the Administrator</string>
+    <string name="task_missing">This task could not be found.</string>
+    <string name="task_need_before">Add at least one before photo to start cleaning.</string>
+    <string name="task_need_after">Add at least one after photo to complete the task.</string>
+    <string name="task_completed_hint">Cleaning submitted. An administrator will review it.</string>
+    <string name="task_cancelled_hint">This task was cancelled by an administrator.</string>
+    <string name="task_accepted">Task accepted.</string>
+    <string name="task_started">Cleaning started.</string>
+    <string name="task_completed_toast">Task completed and submitted for approval.</string>
+    <string name="evidence_remove_title">Remove photo</string>
+    <string name="evidence_remove_confirm">Remove this cleaning photo?</string>
+    <string name="evidence_remove">Remove</string>
+    <string name="evidence_camera_denied">Camera permission is needed to take a photo.</string>
+    <string name="evidence_camera_failed">Could not open the camera. Try the gallery instead.</string>
+    <string name="evidence_prepare_failed">That image could not be prepared for upload.</string>
+    <string name="evidence_uploaded">Photo uploaded.</string>
+    <string name="task_accept">Accept Task</string>
+    <string name="task_start">Start Cleaning</string>
+    <string name="task_complete">Mark as Completed</string>
+    <string name="evidence_before">Before Cleaning</string>
+    <string name="evidence_after">After Cleaning</string>
+    <string name="evidence_before_hint">Add at least one photo of the area before you clean.</string>
+    <string name="evidence_after_hint">Add at least one photo when the cleaning is done.</string>
+    <string name="evidence_required">Required</string>
+    <string name="add_photo_title">Add cleaning photo</string>
+    <string name="add_photo_camera">Take a photo</string>
+    <string name="add_photo_gallery">Choose from gallery</string>
+    <string name="task_notes_hint">Completion notes (optional)</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_empty">You have no notifications yet.</string>
+    <string name="notifications_trash_empty">Trash is empty.</string>
+    <string name="notifications_mark_all">Mark all read</string>
+    <string name="notif_channel_name">EcoWatch Task Notifications</string>
+    <string name="notif_channel_description">Assignments and updates for your cleaning tasks</string>
+
+    <!-- Notification settings -->
+    <string name="notif_section_tasks">TASK UPDATES</string>
+    <string name="notif_section_announcements">ANNOUNCEMENTS</string>
+    <string name="notif_section_preferences">ALERTS</string>
+    <string name="notif_allow_title">Allow Notifications</string>
+    <string name="notif_allow_summary">Allow EcoWatch to send task alerts and status updates.</string>
+    <string name="notif_task_assigned_title">Task Assignment Updates</string>
+    <string name="notif_task_assigned_summary">Receive notifications when new tasks are assigned or updated.</string>
+    <string name="notif_task_completed_title">Task Completed</string>
+    <string name="notif_task_completed_summary">Notify when a task you finished has been approved.</string>
+    <string name="notif_task_revision_title">Task Revision / Cancelled</string>
+    <string name="notif_task_revision_summary">Notify when a task needs revision or has been removed.</string>
+    <string name="notif_announcements_title">CENRO Announcements</string>
+    <string name="notif_announcements_summary">Receive environmental announcements and important notices.</string>
+    <string name="notif_sound_title">Notification Sound</string>
+    <string name="notif_sound_summary">Play a sound for new notifications.</string>
+    <string name="notif_vibration_title">Vibration</string>
+    <string name="notif_vibration_summary">Vibrate the device for incoming alerts.</string>
+    <string name="notif_change_sound">Change notification sound</string>
+    <string name="notif_sound_picker_title">Select Notification Sound</string>
+    <string name="notif_sound_updated">Notification sound updated</string>
+
+    <!-- Sign-in and sign-out feedback -->
+    <string name="toast_logging_in">Logging in…</string>
+    <string name="toast_logging_out">Logging out…</string>
+    <string name="toast_biometric_login_success">Biometric login successful!</string>
+    <string name="toast_login_missing_fields">Enter your username and password.</string>
+
+    <!-- Profile -->
+    <string name="profile_sign_out">Sign out</string>
+    <string name="profile_sign_out_confirm">Sign out of this device? Your tasks stay on the server.</string>
+    <string name="profile_name_placeholder">Personnel</string>
+    <string name="profile_id_placeholder">PERSONNEL ID: —</string>
+    <string name="profile_status_placeholder">Available</string>
+    <string name="profile_account_section">Account</string>
+    <string name="profile_username_label">Username</string>
+    <string name="profile_email_label">Email</string>
+    <string name="profile_phone_label">Phone number</string>
+    <string name="profile_dash">—</string>
+    <string name="profile_managed_hint">These details are managed by an administrator.</string>
+
+    <!-- Occupation and the truck a Driver is assigned to. -->
+    <string name="profile_occupation_label">Occupation</string>
+    <string name="profile_occupation_regular">Regular</string>
+    <string name="profile_occupation_driver">Driver</string>
+    <string name="profile_vehicle_assigned_title">Vehicle Assigned</string>
+    <string name="vehicle_plate_label">Plate number</string>
+    <string name="vehicle_id_format">Vehicle ID: %1$s</string>
+    <string name="vehicle_plate_unknown">No plate recorded</string>
+    <string name="vehicle_icon_description">Assigned vehicle</string>
+
+    <!-- My Vehicle screen, reached from Settings. -->
+    <string name="settings_vehicle">My Vehicle</string>
+    <string name="vehicle_title">My Vehicle</string>
+    <string name="vehicle_subtitle_driver">The truck assigned to you by the Cenro Admin.</string>
+    <string name="vehicle_subtitle_regular">Your account is a Regular cleaner, so no vehicle is assigned to you.</string>
+    <string name="vehicle_empty_driver">No vehicle has been assigned to you yet. Ask the Cenro Admin to assign one.</string>
+    <string name="vehicle_no_occupation">You are registered as a Regular cleaner, so no vehicle is assigned to you.</string>
+    <string name="vehicle_back">Back</string>
+
+    <!--
+        Waste scale. The size a report was filed under decides what the
+        administrator sends to the site, and a cleaner reads it to know whether
+        they are walking in alone or arriving as half a crew with a truck.
+    -->
+    <string name="waste_scale_label">Waste Scale</string>
+    <string name="waste_scale_small">Small-Scale Waste</string>
+    <string name="waste_scale_medium">Medium-Scale Waste</string>
+    <string name="waste_scale_large">Large-Scale Waste</string>
+    <string name="assigned_team_label">Assigned Team</string>
+    <string name="assigned_vehicle_label">Assigned Vehicle</string>
+</resources>

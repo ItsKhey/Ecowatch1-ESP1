@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Every account this device knows about, in one list.
+
+    Reached from the person icon in the username field and from the fingerprint
+    button. It merges two stores that used to be separate:
+
+      - SavedAccounts: usernames from registering or signing in on this device.
+        Only the username is kept, so choosing one fills the field and the
+        password still has to be typed.
+
+      - BiometricSetting: accounts whose owner opted in to fingerprint login.
+        These do carry a stored password, so choosing one opens the fingerprint
+        prompt instead.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_rounded"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Account"
+        android:textColor="@color/green"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvAccountsSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="12dp"
+        android:text="Accounts with fingerprint sign in with your fingerprint. The rest fill the username, so you type the password."
+        android:textColor="#A0A0A0"
+        android:textSize="12sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAccounts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="300dp"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/tvNoAccounts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="24dp"
+        android:text="No accounts on this device yet. They appear here after you register or sign in."
+        android:textColor="#A0A0A0"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp"
+        android:text="Cancel"
+        android:textColor="@color/green" />
+
+</LinearLayout>

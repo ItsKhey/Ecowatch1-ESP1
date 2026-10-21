@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green">#06402B</color>
+    <color name="light_green">#A8FFB0</color>
+    <color name="semi_transparent_green">#8006402B</color>
+    <color name="transparent">#00000000</color>
+    <color name="faint_green_color">#5F7F65</color>
+    <color name="chip_background">#E8F5E9</color>
+    <color name="chip_text_and_icon">#06402B</color>
+</resources>

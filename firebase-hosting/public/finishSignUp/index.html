@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoWatch</title>
+  <!--
+    This page is the App Link the password-reset and email-verification links
+    continue to.
+
+    When the app's signing certificate SHA-256 is registered in the Firebase
+    console, Android verifies the link and opens EcoWatch directly, so this
+    document is never displayed. It only runs when that verification has not been
+    set up, and its job is to hand the action code to the app rather than leave
+    the resident on a dead page.
+
+    The action code is read here but never transmitted anywhere: the custom-scheme
+    link is handed straight to the operating system, and the EcoWatch backend is
+    the only thing that acts on it.
+  -->
+  <style>
+    :root {
+      --green: #06402B;
+      --light-green: #A8FFB0;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #06402B;
+      color: #FFFFFF;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      text-align: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      max-width: 420px;
+      width: 100%;
+      border: 2px solid var(--green);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      padding: 32px 24px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin: 0 0 12px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #E6F4EC;
+      margin: 0 0 24px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    a.button {
+      display: block;
+      padding: 14px 20px;
+      border-radius: 10px;
+      background: var(--green);
+      border: 2px solid var(--light-green);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .warning {
+      color: #FFD9D9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 id="title">Finish in EcoWatch</h1>
+    <p id="message">
+      Your link is valid. Open this page in the EcoWatch app to continue.
+    </p>
+
+    <div class="actions">
+      <a class="button" id="openApp" href="#">Open EcoWatch</a>
+      <a class="button hidden" id="openAppVerify" href="#">Open EcoWatch to verify email</a>
+    </div>
+
+    <p class="warning hidden" id="failed">
+      EcoWatch could not be opened automatically. Install the app, then tap the
+      link in your email again.
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var oobCode = params.get('oobCode');
+      var mode = params.get('mode');
+
+      var title = document.getElementById('title');
+      var message = document.getElementById('message');
+      var openApp = document.getElementById('openApp');
+      var openAppVerify = document.getElementById('openAppVerify');
+
+      // A link with no action code is not one EcoWatch sent. Send them back rather
+      // than opening an app that will only tell them the same thing.
+      if (!oobCode) {
+        title.textContent = 'This link is not valid';
+        message.textContent =
+          'Open the most recent link from your EcoWatch email. Links expire, so ' +
+          'request a new one from the app if this is an old message.';
+        openApp.classList.add('hidden');
+        return;
+      }
+
+      // The two journeys continue to the same URL and are told apart by mode,
+      // matching what the app's own router does.
+      var isReset = mode === 'resetPassword';
+
+      if (isReset) {
+        openApp.href = 'ecowatch://password-reset?oobCode=' +
+          encodeURIComponent(oobCode) + '&mode=resetPassword';
+      } else {
+        openApp.classList.add('hidden');
+        openAppVerify.classList.remove('hidden');
+        openAppVerify.href = 'ecowatch://email-verified?oobCode=' +
+          encodeURIComponent(oobCode) + '&mode=' +
+          encodeURIComponent(mode || 'verifyEmail');
+      }
+
+      // If the app is not installed the browser will not navigate, so offer
+      // instructions rather than leaving a dead button.
+      var left = false;
+      window.addEventListener('pagehide', function () { left = true; });
+      window.addEventListener('blur', function () { left = true; });
+
+      openApp.addEventListener('click', function () {
+        setTimeout(function () {
+          if (!left) {
+            document.getElementById('failed').classList.remove('hidden');
+          }
+        }, 1800);
+      });
+
+      openAppVerify.addEventListener('click', function () {
+        setTimeout(function () {
+          if (!left) {
+            document.getElementById('failed').classList.remove('hidden');
+          }
+        }, 1800);
+      });
+    })();
+  </script>
+</body>
+</html>

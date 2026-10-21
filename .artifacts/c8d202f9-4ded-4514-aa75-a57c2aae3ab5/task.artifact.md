@@ -1,0 +1,6 @@
+- [x] Refactor `BiometricSetting` model to be account-specific
+- [x] Refactor `BiometricDao` to support account-specific queries
+- [x] Refactor `SessionManager` to handle biometrics per account
+- [x] Update `SecurityPrivacyFragment` to manage biometrics for the current user
+- [x] Update `LoginActivity` to support account-specific biometric login
+- [x] Verify persistence and account isolation

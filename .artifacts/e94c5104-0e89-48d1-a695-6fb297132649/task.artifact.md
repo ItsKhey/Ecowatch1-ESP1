@@ -1,0 +1,4 @@
+- [x] Create custom style for filter chips in `styles.xml`
+- [x] Update `fragment_history.xml` to use `ChipGroup` and `Chip`s
+- [x] Update `HistoryFragment.java` to handle the new `ChipGroup` logic
+- [x] Verify the changes by running the app and testing filters

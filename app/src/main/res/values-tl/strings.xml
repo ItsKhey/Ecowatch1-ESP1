@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MyEcoWatch1</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_reports">Mga Ulat</string>
+    <string name="nav_alerts">Mga Alerto</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Report details dialog -->
+    <string name="report_detail_assignment_pending">May itinalaga na ang isang crew ng linis sa iyong ulat.</string>
+    <string name="report_detail_assignment_done">Tapos na ng crew ng linis ang ulat na ito.</string>
+    <!-- %1$s is an already-formatted date and time, e.g. "October 09, 2026 at 03:15 PM" -->
+    <string name="report_detail_assigned_on">Itinalaga noong %1$s</string>
+    <string name="report_detail_completed_on">Tapos ang paglilinis noong %1$s</string>
+</resources>

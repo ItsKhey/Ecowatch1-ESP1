@@ -1,0 +1,38 @@
+/*
+ * Firebase Hosting for the App Link that the emailed links continue to.
+ *
+ * This is a safety net, not the primary path. When the app's signing certificate
+ * SHA-256 is registered in the Firebase console, Android verifies the App Link
+ * and opens EcoWatch directly, so this page is never rendered.
+ *
+ * It exists because the alternative is bad: if autoVerify has not been set up,
+ * the resident who taps their password-reset email lands on a Firebase 404 and
+ * has no way to recover. This page turns that into a working hand-off.
+ *
+ * Deploy with:
+ *   cd MyEcoWatch1/firebase-hosting
+ *   firebase use ecowatch1-4445f
+ *   firebase deploy --only hosting
+ */
+
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "/finishSignUp",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-store, no-cache, must-revalidate"
+          }
+        ]
+      }
+    ]
+  }
+}

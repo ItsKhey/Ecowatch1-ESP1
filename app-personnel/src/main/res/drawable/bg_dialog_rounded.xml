@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Rounded surface behind the confirmation dialog.
+
+    Bound to the theme surface colour rather than a fixed one, so the dialog does
+    not become a white slab in night mode where @color/white is the dark surface.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?attr/colorSurface" />
+    <corners android:radius="16dp" />
+</shape>

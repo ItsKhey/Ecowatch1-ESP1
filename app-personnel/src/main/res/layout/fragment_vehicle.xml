@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The truck assigned to the signed-in cleaner.
+
+    Same header/back-button arrangement as fragment_profile.xml, because this is
+    reached from the Settings menu the same way the account screen is.
+
+    The vehicle card is a single <include> rather than a RecyclerView: the backend
+    allows exactly one driver per truck, so this list can hold zero or one row and
+    a scrolling container would only be machinery around a constant. It also means
+    the card is one layout shared with nothing else, so the values it shows can be
+    bound directly instead of through a view holder.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/vehicleSwipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="100dp">
+
+
+                <!-- Header with Centered Vehicle Title and Back Button -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageButton
+                        android:id="@+id/vehicleBackBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="start|center_vertical"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/vehicle_back"
+                        android:src="@drawable/ic_back"
+                        app:tint="@color/green" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/vehicle_title"
+                        android:textColor="@color/green"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </FrameLayout>
+
+
+                <TextView
+                    android:id="@+id/vehicleSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vehicle_subtitle_driver"
+                    android:textColor="@color/faint_green_color"
+                    android:textSize="13sp" />
+
+                <ProgressBar
+                    android:id="@+id/vehicleProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="32dp"
+                    android:indeterminateTint="@color/green"
+                    android:visibility="gone" />
+
+                <!--
+                  The id here REPLACES the included layout's root id, so this tag
+                  is the handle to the card and its children are looked up inside
+                  it. The same arrangement fragment_settings_menu.xml uses for
+                  @id/itemManageProfile over item_settings_row.xml.
+
+                  Width and height are restated because a margin on an <include>
+                  is only honoured when the tag carries both, so leaving them to
+                  the included layout would silently drop the top margin.
+                -->
+                <include
+                    android:id="@+id/vehicleCard"
+                    layout="@layout/item_assigned_vehicle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/vehicleEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center"
+                    android:paddingHorizontal="24dp"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</FrameLayout>

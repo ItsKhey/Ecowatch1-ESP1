@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One truck, shown to the cleaner who drives it.
+
+    Follows item_task.xml: a stroked card, the identity line bold in @color/green
+    and the supporting lines in the faint green. The difference is the round 64dp
+    truck illustration at the top instead of a status pill, because a vehicle has
+    no assignment status to badge — it is simply the one this person drives.
+
+    Only the two facts the ESP actually has are on it. /api/personnel/me returns
+    the plate and the vehicle id and nothing else about the truck, so a card with
+    rated load and service dates would be showing placeholders rather than data.
+
+    No id on this root: fragment_vehicle.xml includes it with an id on the
+    <include> tag, and an id there REPLACES the included root's own. Declaring
+    both would leave the root reachable only under the include's id, which is the
+    trap that made this card unresolvable at first. Same arrangement as
+    item_settings_row.xml behind @id/itemManageProfile.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:strokeColor="#06402B"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/vehicle_icon_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/garbage_truck"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        <TextView
+            android:id="@+id/vehicleCardPlate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textColor="@color/green"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="ABC-123" />
+
+        <TextView
+            android:id="@+id/vehicleCardVehicleId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:textColor="@color/faint_green_color"
+            android:textSize="13sp"
+            tools:text="Vehicle ID: VEH-0007" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="14dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/profile_managed_hint"
+            android:textColor="@color/faint_green_color"
+            android:textSize="12sp" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

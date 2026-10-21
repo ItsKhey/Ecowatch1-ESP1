@@ -1,0 +1,5 @@
+- `[x]` Update `dialog_edit_profile.xml` to include username field
+- `[x]` Update `AuthRepository.java` to handle username in `updateProfile`
+- `[x]` Update `ProfileFragment.java` to bind and save the new username field
+- `[x]` Update `authController.js` (Backend) to handle username updates
+- `[x]` Implement username uniqueness check in Backend `updateProfile`

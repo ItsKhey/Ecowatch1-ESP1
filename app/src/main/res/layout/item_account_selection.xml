@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One account in the "Select Account" dialog.
+
+    Two variants share this row:
+
+      - A fingerprint account, which shows a small tag because tapping it opens
+        the fingerprint prompt instead of just filling the field. That
+        difference is worth stating, rather than letting it look like a bug.
+
+      - A remembered account, which shows "Remove". Forgetting one has to stay
+        possible now that this list replaced the separate saved-accounts sheet,
+        which is where the Remove action used to live.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/accountItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
+    android:orientation="horizontal"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/ivProfilePicture"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:contentDescription="Profile picture"
+        android:scaleType="centerInside"
+        android:src="@drawable/pfpremovedbg" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="user@example.com"
+            android:textColor="@color/green"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvAccountTag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Fingerprint login"
+            android:textColor="#A0A0A0"
+            android:textSize="11sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvRemoveAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:text="Remove"
+        android:textColor="#A0A0A0"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -1,0 +1,163 @@
+<resources>
+    <string name="app_name">EcoWatch Personnel</string>
+    <string name="nav_tasks">Aking mga Gawain</string>
+    <string name="nav_alerts">Mga Abiso</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_menu">Menu</string>
+
+    <!-- Task list -->
+    <string name="filter_all">Lahat</string>
+    <string name="filter_active">Aktibo</string>
+    <string name="filter_assigned">Itinalaga</string>
+    <string name="filter_accepted">Tinatanggap</string>
+    <string name="filter_in_progress">Isinasagawa</string>
+    <string name="filter_under_approval">Naghihintay ng Aprubasyon</string>
+    <string name="filter_completed">Tapos na</string>
+    <string name="filter_cancelled">Kinansela</string>
+    <string name="tasks_empty">Wala pang gawain na ipapakita dito.</string>
+    <string name="tasks_empty_active">Wala kang aktibong gawain sa ngayon.</string>
+    <string name="tasks_empty_for_approval">Wala pang naghihintay ng aprubasyon.</string>
+    <!-- A format string, so the same in both languages; declared here so lint
+         does not read the Tagalog folder as a partial translation. -->
+    <string name="filter_count_format" translatable="false">%1$s (%2$d)</string>
+
+    <!-- Task history -->
+    <string name="history_title">Kasaysayan</string>
+    <string name="history_search_hint">Maghanap sa kasaysayan...</string>
+    <string name="history_sort_newest">Pinakabagong una</string>
+    <string name="history_sort_oldest">Pinakamatanda una</string>
+    <string name="history_empty">Wala pang nakatalang gawain.</string>
+    <string name="history_empty_filter">Walang gawaing tumutugma sa filter na ito.</string>
+    <string name="history_empty_search">Walang gawaing tumutugma sa hinahanap mo.</string>
+    <string name="history_offline_notice">Ipinapakita ang naka-save na mga gawain. Hilahin pababa para mag-refresh.</string>
+    <string name="history_count_title">Kasaysayan (%1$d)</string>
+    <string name="history_clear_search">Burahin ang paghahanap</string>
+    <string name="history_sort">Palitan ang pagkakasunod-sunod</string>
+    <string name="history_evidence_format">Bago %1$d · Pagkatapos %2$d</string>
+    <string name="history_assigned_format">Itinalaga %1$s</string>
+    <string name="history_accepted_format">Tinatanggap %1$s</string>
+    <string name="history_started_format">Sinimulan %1$s</string>
+    <string name="history_completed_format">Tapos na %1$s</string>
+    <string name="history_report_format">Ulat %1$s</string>
+
+    <!-- Settings -->
+    <string name="settings_section_account">Akawnt</string>
+    <string name="settings_section_preferences">Mga Kagustuhan</string>
+    <string name="settings_section_support">Suporta</string>
+    <string name="settings_account_details">Detalye ng Akawnt</string>
+    <string name="settings_task_history">Kasaysayan</string>
+    <string name="settings_security_privacy">Seguridad at Privacy</string>
+    <string name="settings_notifications">Mga Abiso</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_help_center">Sentro ng Tulong</string>
+    <string name="settings_terms">Mga Tuntunin at Patakaran</string>
+    <string name="settings_about_us">Tungkol Sa Amin</string>
+    <string name="settings_log_out">Mag-log out</string>
+    <string name="settings_theme_light">Maliwanag</string>
+    <string name="settings_theme_dark">Madilim</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_got_it">Naiintindihan ko</string>
+    <string name="settings_theme_dialog_title">Pumili ng Tema</string>
+    <string name="settings_help_title">Sentro ng Tulong</string>
+    <string name="settings_help_message">Paano gamitin ang EcoWatch Personnel\n\n1. Tanggapin ang gawain mula sa Aking mga Gawain sa lalong madaling panahon, para alam ng mga naninirahan na hinahawakan na ito.\n2. Mag-upload ng kahit isang Before Cleaning na larawan, pagkatapos pindutin ang Start Cleaning.\n3. Magdagdag ng After Cleaning na larawan at pindutin ang Mark as Completed. Susuriin ng administrator ang pag-clean up pagkatapos.\n4. Nananatili sa Task History ang lahat ng gawain na natanggap ng account na ito, para makita mo kung ano pa ang bukas.\n\nKung hindi maabot ang server, tiyaking nasa iisang network ka ng server at tama pa ang address sa Server settings.</string>
+    <string name="settings_terms_title">Mga Tuntunin at Patakaran</string>
+    <string name="settings_terms_message">Mga tuntunin sa paggamit\n\n- Gamitin ang app na ito para lamang sa gawing paglinis na ibinigay ng isang administrator.\n- Ang mga larawan bago at pagkatapos ay dapat ipakita ang lugar na hiniling mong linisin. Huwag mag-upload ng larawan ng mga tao, bahay, o plate.\n- Nakikita ng mga administrator ng EcoWatch ang lokasyon at mga larawan ng gawain, at hindi ito nalathala sa publiko.\n- Huwag ibahagi ang iyong account, at huwag payagan ang iba na gamitin ang naka-sign-in mong device.\n\nPrivacy\n\nItinatago ng EcoWatch ang detalye ng iyong account, ang mga gawain mo, at ang mga larawang ini-upload mo. Hindi nito kinokolekta ang iyong lokasyon, contacts, o browsing history.</string>
+
+    <!-- Security -->
+    <string name="security_section_security">Seguridad</string>
+    <string name="security_section_privacy">Privacy</string>
+    <string name="security_biometric_title">Biometric App Lock</string>
+    <string name="security_change_password">Palitan ang Password</string>
+    <string name="security_current_password">Kasalukuyang Password</string>
+    <string name="security_new_password">Bagong Password</string>
+    <string name="security_confirm_password">Kumpirmahin ang Bagong Password</string>
+    <string name="security_update_password">I-update ang Password</string>
+    <string name="security_biometric_enabled">Naka-on ang biometric app lock.</string>
+    <string name="security_biometric_disabled">Naka-off ang biometric app lock.</string>
+    <string name="security_biometric_summary">Magtanong ng fingerprint bago ipakita ang iyong mga gawain.</string>
+    <string name="security_password_length_hint">Gumamit ng 8 hanggang 72 na karakter. Nananatiling naka-sign in ang iyong session.</string>
+    <string name="security_location_privacy">Privacy ng Lokasyon</string>
+    <string name="security_report_photos">Mga Larawan ng Paglinis</string>
+    <string name="security_no_hardware">Walang nahanap na fingerprint sensor sa device na ito.</string>
+    <string name="security_not_enrolled_title">Walang naregistradong fingerprint</string>
+    <string name="security_not_enrolled_message">Magrehistro muna ng fingerprint sa mga setting ng device mo, pagkatapos ay bumalik at i-on ito.</string>
+    <string name="security_open_settings">Buksan ang mga setting</string>
+    <string name="security_biometric_unavailable">Hindi available sa device na ito ang biometric authentication sa ngayon.</string>
+    <string name="security_confirm_password_title">Kumpirmahin ang iyong password</string>
+    <string name="security_confirm_password_message">Ilagay ang password ng iyong account para magparehistro ng fingerprint sa device na ito. Isang beses lang ito, sa oras ng pagpaparehistro.</string>
+    <string name="security_confirm_password_field">Password</string>
+    <string name="security_confirm">Kumpirmahin</string>
+    <string name="security_register_message">I-scan ang iyong fingerprint para parehistro ito para sa account na ito.</string>
+    <string name="security_fingerprint_login">Mag-sign in gamit ang fingerprint</string>
+    <string name="security_fingerprint_login_title">Fingerprint Login</string>
+    <string name="security_fingerprint_login_subtitle">Kumpirmahin ang iyong fingerprint para buksan ang EcoWatch Personnel.</string>
+    <string name="security_fingerprint_login_for">Nag-sign in bilang %1$s. Kumpirmahin ang iyong fingerprint.</string>
+    <string name="security_location_privacy_message">Hindi kailanman ng EcoWatch na hilingin sa app na ito ang iyong lokasyon. Ang mga coordinate na nakikita mo sa isang gawain ay pag-aari ng ulat na ipinasa ng isang naninirahan, at ginagamit ito para mahanap ang lugar at ma-upload ang tamang mga larawan.</string>
+    <string name="security_report_photos_message">Nakakabit ang mga larawan bago at pagkatapos sa gawain para suriin ng administrator ang paglinis. Nakikita ito ng iyong mga administrator at hindi ito nalathala sa publiko.</string>
+
+    <!-- About -->
+    <string name="about_title">Tungkol Sa Amin</string>
+
+    <!-- Notification settings -->
+    <!-- Shown by Android itself in system settings, so these cannot stay English. -->
+    <string name="notif_channel_name">Mga Abiso sa Gawain ng EcoWatch</string>
+    <string name="notif_channel_description">Mga italaga at update para sa iyong mga gawaing paglilinis</string>
+    <string name="notif_section_tasks">MGA PAG-ATOS NG GAWAIN</string>
+    <string name="notif_section_announcements">MGA PAALALA</string>
+    <string name="notif_section_preferences">MGA ALERTO</string>
+    <string name="notif_allow_title">Payagan ang Mga Abiso</string>
+    <string name="notif_allow_summary">Payagan ang EcoWatch na magpadala ng mga alerto sa gawain at pag-update ng estado.</string>
+    <string name="notif_task_assigned_title">Pag-update ng Itinalagang Gawain</string>
+    <string name="notif_task_assigned_summary">Makatanggap ng abiso kapag may bagong gawain na itinalaga o na-update.</string>
+    <string name="notif_task_completed_title">Tapos na ang Gawain</string>
+    <string name="notif_task_completed_summary">Makatanggap ng abiso kapag inaprubahan na ang gawaing natapos mo.</string>
+    <string name="notif_task_revision_title">Pagbabago / Kanselado</string>
+    <string name="notif_task_revision_summary">Makatanggap ng abiso kapag may gawaing nangailangan ng pagbabago o natanggal.</string>
+    <string name="notif_announcements_title">Mga Paalala ng CENRO</string>
+    <string name="notif_announcements_summary">Makatanggap ng mga paalala sa kalikasan at mahahalagang abiso.</string>
+    <string name="notif_sound_title">Tunog ng Abiso</string>
+    <string name="notif_sound_summary">Magpatugtog ng tunog para sa mga bagong abiso.</string>
+    <string name="notif_vibration_title">Pags vibrate</string>
+    <string name="notif_vibration_summary">Vibrate ang device para sa mga papasok na alerto.</string>
+    <string name="notif_change_sound">Palitan ang tunog ng abiso</string>
+    <string name="notif_sound_picker_title">Pumili ng Tunog ng Abiso</string>
+    <string name="notif_sound_updated">Na-update ang tunog ng abiso</string>
+
+    <!-- Sign-in and sign-out feedback -->
+    <string name="toast_logging_in">Nagsa-sign in…</string>
+    <string name="toast_logging_out">Nagsa-sign out…</string>
+    <string name="toast_biometric_login_success">Tagumpay ang biometric login!</string>
+    <string name="toast_login_missing_fields">Ilagay ang iyong username at password.</string>
+
+    <!-- Occupation at ang itinalagang sasakyan. -->
+    <string name="profile_occupation_label">Hanapbuhay</string>
+    <string name="profile_occupation_regular">Regular</string>
+    <string name="profile_occupation_driver">Driver</string>
+    <string name="profile_vehicle_assigned_title">Itinalagang Sasakyan</string>
+    <string name="vehicle_plate_label">Plate number</string>
+    <string name="vehicle_id_format">ID ng Sasakyan: %1$s</string>
+    <string name="vehicle_plate_unknown">Walang nakalangad na plate</string>
+    <string name="vehicle_icon_description">Itinalagang sasakyan</string>
+
+    <!-- Ang screen ng aking sasakyan, mula sa Settings. -->
+    <string name="settings_vehicle">Aking Sasakyan</string>
+    <string name="vehicle_title">Aking Sasakyan</string>
+    <string name="vehicle_subtitle_driver">Ang trak na itinalaga sa iyo ng Cenro Admin.</string>
+    <string name="vehicle_subtitle_regular">Ang iyong account ay Regular cleaner, kaya walang itinalagang sasakyan sa iyo.</string>
+    <string name="vehicle_empty_driver">Wala pang itinalagang sasakyan sa iyo. Pakiusap sa Cenro Admin na magtalaga ng isa.</string>
+    <string name="vehicle_no_occupation">Ikaw ay nakatalagang Regular cleaner, kaya walang itinalagang sasakyan sa iyo.</string>
+    <string name="vehicle_back">Bumalik</string>
+
+    <!--
+        Laki ng basura. Ang laki ng ulat ang nagpapasiya kung ano ang ipinapadala ng
+        administrator, at ito ang binabasa ng cleaner upang malaman kung siya
+        magisa o bahagi ng isang team na may sasakyan.
+    -->
+    <string name="waste_scale_label">Laki ng Basura</string>
+    <string name="waste_scale_small">Maliitang Kalakip na Basura</string>
+    <string name="waste_scale_medium">Katamtamang Kalakip na Basura</string>
+    <string name="waste_scale_large">Malaking Kalakip na Basura</string>
+    <string name="assigned_team_label">Itinalagang Team</string>
+    <string name="assigned_vehicle_label">Itinalagang Sasakyan</string>
+    <string name="about_body">Tungkol sa EcoWatch Personnel\n\nAng EcoWatch Personnel ay ang kaakibat na app para sa mga tauhan ng waste-management na nagpapatupad ng paglinis na inuulat ng mga naninirahan sa EcoWatch. Ito ang labas na bahagi ng isang sistema: nag-uulat ang mga naninirahan, sinusuri at itinatakda ng mga administrator, at dito tinatanggap ng assigned cleaner ang gawain, kinukunan ng larawan ng lugar bago at pagkatapos, at ipinapasa ang trabaho para sa aprubasyon.\n\nMula sa ulat ng naninirahan ang bawat gawain sa app na ito. Walang handang inilalagay dito, kaya palaging binubuo ng isang gawain ang lugar at ang problema na inilarawan ng isang naninirahan.\n\nAno ang magagawa mo dito\n\nTanggapin ang lahat ng gawain\nItinatakda ng mga administrator ang mga inuulat na problema sa mga cleaner na sakop ang lugar na iyon. Lahat ng iyong gawain ay lumalabas sa Aking mga Gawain, at nananatili sa Kasaysayan ng Gawain ang mga lumipat na sa iba.\n\nTanggapin at subukan ang trabaho\nAng gawain ay lilipat mula Assigned tungo Accepted, In Progress, at Completed. Nakatala ang oras ng bawat hakbang, kaya nakikita sa kasaysayan kung kailan kinuha ang trabaho at kung kailan ito natapos.\n\nPatunayan ang paglinis\nKailangan ang mga larawan bago at pagkatapos. Ang larawan bago ay dokumentasyon ng naiulat na problema; ang larawan pagkatapos ay nagpapakita ng nagawa ng iyong team. Sinusuri ito ng administrator bago isara ang gawain, at nakikita ng mga naninirahan kapag nalutas na ang kanilang ulat.\n\nNaiisa sa mga gawain mo\nSinasabi ng app sa iyo kapag may bagong trabaho, at kapag naaprubahan na ang gawang tinapos mo, kaya hindi ka na nalilito.\n\nPanatilihin ang iyong tala\nItinatago ng Kasaysayan ng Gawain ang bawat gawain sa device na ito. Mababasa mo kung ano ang ginawa mo, kailan mo ito ginawa, at ano ang ipinasa mo, kahit walang koneksyon.\n\nAng aming layunin\nNabuo ang EcoWatch para gawing makita at mapagkumpanya ang mga paglinis ng komunidad. Nag-uulat ang mga naninirahan, naglilinis ang tauhan, at sinusuri ng administrator. Makita. Iulat. Linisin. Patunayan.</string>
+</resources>

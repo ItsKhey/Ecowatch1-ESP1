@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pill behind the history search field. Uses the theme's surface colour rather
+    than a fixed one so it stays readable in night mode, where @color/white is
+    the dark surface.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?attr/colorSurface" />
+    <corners android:radius="25dp" />
+    <stroke
+        android:width="1.5dp"
+        android:color="?attr/colorPrimary" />
+</shape>

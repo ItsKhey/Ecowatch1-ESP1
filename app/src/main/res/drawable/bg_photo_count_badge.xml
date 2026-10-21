@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Photo-count pill shown on a report row when the report carries more than
+    one image. Theme-aware so it stays legible in both light and dark mode.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="?attr/colorSurfaceVariant" />
+
+    <corners android:radius="100dp" />
+
+    <stroke
+        android:width="1dp"
+        android:color="?attr/colorPrimary" />
+</shape>
