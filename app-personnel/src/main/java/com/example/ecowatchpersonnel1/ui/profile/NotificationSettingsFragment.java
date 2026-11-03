@@ -105,7 +105,7 @@ public class NotificationSettingsFragment extends Fragment {
         settingsContentLayout = view.findViewById(R.id.settingsContentLayout);
 
         switchAllowNotifications = bindRow(view, R.id.itemAllowNotifications,
-                R.drawable.ic_notification,
+                com.example.ecowatchpersonnel1.core.R.drawable.ic_notification,
                 getString(R.string.notif_allow_title),
                 getString(R.string.notif_allow_summary));
         switchTaskAssigned = bindRow(view, R.id.itemTaskAssigned, R.drawable.ic_inbox,
@@ -118,7 +118,7 @@ public class NotificationSettingsFragment extends Fragment {
         switchTaskRevision = bindRow(view, R.id.itemTaskRevision, R.drawable.ic_back,
                 getString(R.string.notif_task_revision_title),
                 getString(R.string.notif_task_revision_summary));
-        switchAnnouncements = bindRow(view, R.id.itemAnnouncements, R.drawable.ic_notification,
+        switchAnnouncements = bindRow(view, R.id.itemAnnouncements, com.example.ecowatchpersonnel1.core.R.drawable.ic_notification,
                 getString(R.string.notif_announcements_title),
                 getString(R.string.notif_announcements_summary));
         switchSound = bindRow(view, R.id.itemSound, android.R.drawable.ic_lock_silent_mode_off,

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Strings used by the shared notification and waste-scale helpers. They live
+        with the core module because that is where the code that reads them lives;
+        the app still resolves them through the merged resource table.
+    -->
+    <string name="notif_channel_name">EcoWatch Task Notifications</string>
+    <string name="notif_channel_description">Assignments and updates for your cleaning tasks</string>
+
+    <string name="waste_scale_small">Small-Scale Waste</string>
+    <string name="waste_scale_medium">Medium-Scale Waste</string>
+    <string name="waste_scale_large">Large-Scale Waste</string>
+</resources>

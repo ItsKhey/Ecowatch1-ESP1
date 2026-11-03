@@ -109,6 +109,7 @@
                     android:textSize="13sp" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/usernameInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
@@ -117,6 +118,10 @@
                     app:boxStrokeWidth="2dp"
                     app:boxStrokeWidthFocused="2dp"
                     app:hintTextColor="@color/green"
+                    app:endIconContentDescription="Select account"
+                    app:endIconDrawable="@drawable/ic_profile"
+                    app:endIconMode="custom"
+                    app:endIconTint="@color/green"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -156,6 +161,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/loginBtn"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"

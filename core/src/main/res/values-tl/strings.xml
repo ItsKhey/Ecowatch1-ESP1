@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shown by Android itself in system settings, so these cannot stay English. -->
+    <string name="notif_channel_name">Mga Abiso sa Gawain ng EcoWatch</string>
+    <string name="notif_channel_description">Mga italaga at update para sa iyong mga gawaing paglilinis</string>
+
+    <string name="waste_scale_small">Maliitang Kalakip na Basura</string>
+    <string name="waste_scale_medium">Katamtamang Kalakip na Basura</string>
+    <string name="waste_scale_large">Malaking Kalakip na Basura</string>
+</resources>

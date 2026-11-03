@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One collection vehicle, as the resident sees it.
+
+    The mirror of item_assignment_crew_card: the truck illustration on top
+    with the plate number under it, in the same 104dp card as the crew cards.
+
+    A vehicle carries no uploaded photo, so the shipped truck illustration is
+    the whole identity row rather than a placeholder that is rarely seen (the
+    same choice item_vehicle.xml makes).
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vehicleCard"
+    android:layout_width="104dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#06402B"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/vehicleCardIcon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:contentDescription="@string/report_detail_vehicle_icon_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/garbage_truck"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        <TextView
+            android:id="@+id/vehicleCardPlate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="XYZ-1234" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

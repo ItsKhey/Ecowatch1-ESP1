@@ -81,7 +81,7 @@ public class SettingsMenuFragment extends Fragment {
         // accounts change, and the screen already says why it is empty.
         setupRow(view.findViewById(R.id.vehicle), R.drawable.garbage_truck,
                 getString(R.string.settings_vehicle), null);
-        setupRow(view.findViewById(R.id.itemNotifications), R.drawable.ic_notification,
+        setupRow(view.findViewById(R.id.itemNotifications), com.example.ecowatchpersonnel1.core.R.drawable.ic_notification,
                 getString(R.string.settings_notifications), null);
 
         setupRow(view.findViewById(R.id.itemTheme), android.R.drawable.ic_menu_day,

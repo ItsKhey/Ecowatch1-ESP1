@@ -28,6 +28,7 @@ import com.example.ecowatchpersonnel1.data.models.Personnel;
 import com.example.ecowatchpersonnel1.data.remote.ApiCallback;
 import com.example.ecowatchpersonnel1.data.remote.ServerConfig;
 import com.example.ecowatchpersonnel1.data.repository.PersonnelAuthRepository;
+import com.example.ecowatchpersonnel1.data.repository.PersonnelNotificationIntents;
 import com.example.ecowatchpersonnel1.data.repository.PersonnelNotificationRepository;
 import com.example.ecowatchpersonnel1.notifications.FcmTokenSyncScheduler;
 import com.example.ecowatchpersonnel1.ui.alerts.NotificationsFragment;
@@ -54,13 +55,16 @@ public class DashboardActivity extends AppCompatActivity {
 
     /** Must match {@code PERSONNEL_CLICK_ACTION} on the backend. */
     public static final String ACTION_OPEN_NOTIFICATION =
-            "com.example.ecowatchpersonnel1.action.OPEN_NOTIFICATION";
+            PersonnelNotificationIntents.ACTION_OPEN_NOTIFICATION;
 
     // These names are the FCM data payload keys verbatim, so extras survive the
     // trip from the system tray untouched.
-    public static final String EXTRA_NOTIFICATION_ID = "notificationId";
-    public static final String EXTRA_ASSIGNMENT_ID = "assignmentId";
-    public static final String EXTRA_REPORT_ID = "reportId";
+    public static final String EXTRA_NOTIFICATION_ID =
+            PersonnelNotificationIntents.EXTRA_NOTIFICATION_ID;
+    public static final String EXTRA_ASSIGNMENT_ID =
+            PersonnelNotificationIntents.EXTRA_ASSIGNMENT_ID;
+    public static final String EXTRA_REPORT_ID =
+            PersonnelNotificationIntents.EXTRA_REPORT_ID;
 
     private static final long UNREAD_POLL_MS = 30_000L;
 

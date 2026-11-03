@@ -126,6 +126,7 @@
     <string name="evidence_prepare_failed">That image could not be prepared for upload.</string>
     <string name="evidence_uploaded">Photo uploaded.</string>
     <string name="task_accept">Accept Task</string>
+    <string name="task_wait_for_team_leader">Wait for your team leader to accept the task</string>
     <string name="task_start">Start Cleaning</string>
     <string name="task_complete">Mark as Completed</string>
     <string name="evidence_before">Before Cleaning</string>
@@ -143,8 +144,6 @@
     <string name="notifications_empty">You have no notifications yet.</string>
     <string name="notifications_trash_empty">Trash is empty.</string>
     <string name="notifications_mark_all">Mark all read</string>
-    <string name="notif_channel_name">EcoWatch Task Notifications</string>
-    <string name="notif_channel_description">Assignments and updates for your cleaning tasks</string>
 
     <!-- Notification settings -->
     <string name="notif_section_tasks">TASK UPDATES</string>
@@ -196,6 +195,11 @@
     <string name="vehicle_id_format">Vehicle ID: %1$s</string>
     <string name="vehicle_plate_unknown">No plate recorded</string>
     <string name="vehicle_icon_description">Assigned vehicle</string>
+    <string name="report_detail_crewmates">Crewmates</string>
+    <string name="report_detail_crewmates_hint">Your fellow crewmates assigned to this report.</string>
+    <string name="report_detail_vehicle">Vehicle</string>
+    <string name="report_detail_crewmate_avatar_description">Crew member</string>
+    <string name="report_detail_vehicle_icon_description">Vehicle</string>
 
     <!-- My Vehicle screen, reached from Settings. -->
     <string name="settings_vehicle">My Vehicle</string>
@@ -212,9 +216,6 @@
         they are walking in alone or arriving as half a crew with a truck.
     -->
     <string name="waste_scale_label">Waste Scale</string>
-    <string name="waste_scale_small">Small-Scale Waste</string>
-    <string name="waste_scale_medium">Medium-Scale Waste</string>
-    <string name="waste_scale_large">Large-Scale Waste</string>
     <string name="assigned_team_label">Assigned Team</string>
     <string name="assigned_vehicle_label">Assigned Vehicle</string>
 </resources>

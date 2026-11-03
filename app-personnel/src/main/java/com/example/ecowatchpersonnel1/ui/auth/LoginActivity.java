@@ -3,9 +3,16 @@ package com.example.ecowatchpersonnel1.ui.auth;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +27,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ecowatchpersonnel1.data.local.BiometricSetting;
 import com.example.ecowatchpersonnel1.R;
 import com.example.ecowatchpersonnel1.data.remote.RetrofitClient;
 import com.example.ecowatchpersonnel1.data.remote.ServerConfig;
@@ -32,6 +42,11 @@ import com.example.ecowatchpersonnel1.utils.FingerprintEntryPolicy;
 import com.example.ecowatchpersonnel1.utils.SavedAccounts;
 import com.example.ecowatchpersonnel1.utils.ServerHealthCheck;
 import com.example.ecowatchpersonnel1.utils.SessionManager;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 
@@ -57,6 +72,12 @@ public class LoginActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private BiometricRepository biometricRepository;
     private View biometricLoginLayout;
+    private List<BiometricSetting> registeredBiometricAccounts = new ArrayList<>();
+    private AlertDialog accountDialog;
+    private AccountSelectionAdapter accountAdapter;
+    private RecyclerView rvAccountsView;
+    private TextView subtitleAccountsView;
+    private TextView noAccountsView;
 
     /** True while the fingerprint prompt is on screen, so taps cannot stack prompts. */
     private boolean biometricPromptShowing;
@@ -93,6 +114,9 @@ public class LoginActivity extends AppCompatActivity {
         biometricLoginLayout = findViewById(R.id.biometricLoginLayout);
 
         observeRegistrations();
+        ((com.google.android.material.textfield.TextInputLayout)
+                findViewById(R.id.usernameInputLayout))
+                .setEndIconOnClickListener(v -> showAccountSelectionDialog());
 
         if (viewModel.isLoggedIn()) {
             biometricRepository.hasAnyRegisteredAccount(hasAccount -> {
@@ -113,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.loginBtn).setOnClickListener(v -> attemptLogin());
 
         findViewById(R.id.btnFingerprintLogin)
-                .setOnClickListener(v -> handleBiometricLogin());
+                .setOnClickListener(v -> showAccountSelectionDialog());
 
         TextView serverSettingsBtn = findViewById(R.id.serverSettingsBtn);
         serverSettingsBtn.setOnClickListener(v -> showServerSettings());
@@ -174,18 +198,146 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void observeRegistrations() {
         biometricRepository.observeRegisteredAccounts().observe(this, accounts -> {
-            hasRegisteredFingerprint = accounts != null && !accounts.isEmpty();
-            showBiometricButton(canUseFingerprintLogin());
+            registeredBiometricAccounts = accounts == null
+                    ? new ArrayList<>() : new ArrayList<>(accounts);
+            hasRegisteredFingerprint = !registeredBiometricAccounts.isEmpty();
+            showBiometricButton(hasRegisteredFingerprint);
+            refreshAccountSelectionRows();
         });
     }
 
-    /**
-     * Shows or hides the fingerprint button.
-     *
-     * <p>Hidden unless the sensor can actually authenticate. A fingerprint that
-     * stopped registering would leave a button that scans successfully and then
-     * fails, which is worse than making the cleaner use the password form.
-     */
+    /** Opens the shared account chooser from either the username icon or the fingerprint button. */
+    private void showAccountSelectionDialog() {
+        View content = getLayoutInflater().inflate(R.layout.dialog_account_selection, null, false);
+        rvAccountsView = content.findViewById(R.id.rvAccounts);
+        subtitleAccountsView = content.findViewById(R.id.tvAccountsSubtitle);
+        noAccountsView = content.findViewById(R.id.tvNoAccounts);
+        Button cancel = content.findViewById(R.id.btnCancel);
+        accountAdapter = new AccountSelectionAdapter();
+        rvAccountsView.setLayoutManager(new LinearLayoutManager(this));
+        rvAccountsView.setAdapter(accountAdapter);
+
+        accountDialog = new AlertDialog.Builder(this).setView(content).create();
+        if (accountDialog.getWindow() != null) {
+            accountDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        cancel.setOnClickListener(v -> accountDialog.dismiss());
+        accountDialog.setOnDismissListener(dialog -> {
+            accountDialog = null;
+            accountAdapter = null;
+            noAccountsView = null;
+            rvAccountsView = null;
+            subtitleAccountsView = null;
+        });
+        refreshAccountSelectionRows();
+        accountDialog.show();
+    }
+
+    /** Merges remembered usernames and biometric registrations, preferring fingerprint rows. */
+    private void refreshAccountSelectionRows() {
+        if (accountDialog == null || accountAdapter == null) return;
+        LinkedHashMap<String, AccountEntry> merged = new LinkedHashMap<>();
+        for (String username : SavedAccounts.usernames(this)) {
+            addAccount(merged, new AccountEntry(username, null, false));
+        }
+        for (BiometricSetting setting : registeredBiometricAccounts) {
+            if (setting == null) continue;
+            String username = setting.displayUsername();
+            AccountEntry entry = new AccountEntry(username, setting.personnelId, true);
+            String key = accountKey(username);
+            AccountEntry existing = merged.get(key);
+            if (existing == null) merged.put(key, entry);
+            else {
+                existing.fingerprint = true;
+                existing.personnelId = setting.personnelId;
+            }
+        }
+        List<AccountEntry> rows = new ArrayList<>(merged.values());
+        accountAdapter.setItems(rows);
+        boolean isEmpty = rows.isEmpty();
+        if (rvAccountsView != null) {
+            rvAccountsView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        }
+        if (subtitleAccountsView != null) {
+            subtitleAccountsView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        }
+        if (noAccountsView != null) {
+            noAccountsView.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private static void addAccount(LinkedHashMap<String, AccountEntry> rows, AccountEntry entry) {
+        if (entry.username == null || entry.username.trim().isEmpty()) return;
+        String key = accountKey(entry.username);
+        if (!rows.containsKey(key)) rows.put(key, entry);
+    }
+
+    private static String accountKey(String username) {
+        return username == null ? "" : username.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private void selectAccount(AccountEntry account) {
+        if (accountDialog != null) accountDialog.dismiss();
+        if (account.fingerprint) {
+            if (BiometricTokenVault.hasStoredSession(this, account.personnelId)) {
+                usernameInput.setText(account.username);
+                restoreSessionFromVault();
+            } else {
+                prefillUsername(account.username);
+                Toast.makeText(this,
+                        "Fingerprint sign-in needs to be set up again. Sign in with your password.",
+                        Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+
+        String activeUsername = sessionManager.fetchUsername();
+        if (sessionManager.isLoggedIn() && account.username.equalsIgnoreCase(activeUsername)) {
+            if (!sessionManager.isSessionExpired()) {
+                startDashboard();
+                return;
+            }
+            sessionManager.clearSession();
+        }
+        prefillUsername(account.username);
+    }
+
+    private void prefillUsername(String username) {
+        usernameInput.setText(username);
+        usernameInput.setSelection(usernameInput.getText().length());
+        passwordInput.setText("");
+        passwordInput.requestFocus();
+        InputMethodManager keyboard = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (keyboard != null) keyboard.showSoftInput(passwordInput, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void removeAccount(AccountEntry account) {
+        SavedAccounts.forget(this, account.username);
+        if (account.username.equalsIgnoreCase(usernameInput.getText().toString().trim())) {
+            usernameInput.setText("");
+            passwordInput.setText("");
+        }
+        if (sessionManager.isLoggedIn()
+                && account.username.equalsIgnoreCase(sessionManager.fetchUsername())) {
+            sessionManager.clearSession();
+        }
+        String vaultUsername = BiometricTokenVault.storedUsername(this);
+        if (vaultUsername != null && account.username.equalsIgnoreCase(vaultUsername)) {
+            BiometricTokenVault.clear(this);
+        }
+        refreshAccountSelectionRows();
+    }
+
+    private void confirmRemoveAccount(AccountEntry account) {
+        new AlertDialog.Builder(this)
+                .setTitle("Remove account?")
+                .setMessage("Remove " + account.username + " from this device?")
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton("Remove", (dialog, which) -> removeAccount(account))
+                .show();
+    }
+
+    /** Shows the chooser button when a registration and working sensor are present. */
     private void showBiometricButton(boolean canUse) {
         if (biometricLoginLayout == null) return;
 
@@ -520,5 +672,67 @@ public class LoginActivity extends AppCompatActivity {
     private void startDashboard() {
         startActivity(new Intent(this, DashboardActivity.class));
         finish();
+    }
+
+    private static final class AccountEntry {
+        final String username;
+        String personnelId;
+        boolean fingerprint;
+
+        AccountEntry(String username, String personnelId, boolean fingerprint) {
+            this.username = username == null ? "" : username.trim();
+            this.personnelId = personnelId;
+            this.fingerprint = fingerprint;
+        }
+    }
+
+    private final class AccountSelectionAdapter
+            extends RecyclerView.Adapter<AccountSelectionAdapter.AccountViewHolder> {
+        private final List<AccountEntry> accounts = new ArrayList<>();
+
+        void setItems(List<AccountEntry> items) {
+            accounts.clear();
+            if (items != null) accounts.addAll(items);
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public AccountViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View row = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_account_selection, parent, false);
+            return new AccountViewHolder(row);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull AccountViewHolder holder, int position) {
+            AccountEntry account = accounts.get(position);
+            holder.email.setText(account.username);
+            holder.accountTag.setVisibility(account.fingerprint ? View.VISIBLE : View.GONE);
+            holder.itemView.setOnClickListener(v -> selectAccount(account));
+            holder.itemView.setContentDescription(account.fingerprint
+                    ? account.username + ", fingerprint account"
+                    : account.username);
+            holder.removeAccount.setVisibility(account.fingerprint ? View.GONE : View.VISIBLE);
+            holder.removeAccount.setOnClickListener(v -> confirmRemoveAccount(account));
+        }
+
+        @Override
+        public int getItemCount() {
+            return accounts.size();
+        }
+
+        final class AccountViewHolder extends RecyclerView.ViewHolder {
+            final TextView email;
+            final TextView accountTag;
+            final TextView removeAccount;
+
+            AccountViewHolder(@NonNull View itemView) {
+                super(itemView);
+                email = itemView.findViewById(R.id.tvEmail);
+                accountTag = itemView.findViewById(R.id.tvAccountTag);
+                removeAccount = itemView.findViewById(R.id.tvRemoveAccount);
+            }
+        }
     }
 }

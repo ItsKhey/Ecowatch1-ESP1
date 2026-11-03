@@ -27,6 +27,10 @@ import com.example.ecowatchpersonnel1.utils.SessionManager;
 import com.example.ecowatchpersonnel1.utils.TaskStatsStore;
 import com.google.android.material.imageview.ShapeableImageView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * The cleaner's own account.
  *
@@ -51,6 +55,11 @@ public class ProfileFragment extends Fragment {
     private TextView emailText;
     private TextView phoneText;
     private TextView occupationText;
+    private TextView teamRoleText;
+    private View teamDetailsCard;
+    private TextView teamNameDetails;
+    private TextView teamLeaderDetails;
+    private TextView teamMemberDetails;
     private View vehicleCard;
     private TextView vehiclePlateText;
     private TextView vehicleIdText;
@@ -92,6 +101,11 @@ public class ProfileFragment extends Fragment {
         emailText = view.findViewById(R.id.profileEmail);
         phoneText = view.findViewById(R.id.profilePhone);
         occupationText = view.findViewById(R.id.personnelOccupation);
+        teamRoleText = view.findViewById(R.id.profileTeamRole);
+        teamDetailsCard = view.findViewById(R.id.profileTeamDetailsCard);
+        teamNameDetails = view.findViewById(R.id.teamNameDetails);
+        teamLeaderDetails = view.findViewById(R.id.teamLeaderDetails);
+        teamMemberDetails = view.findViewById(R.id.teamMemberDetails);
         vehicleCard = view.findViewById(R.id.profileVehicleCard);
         vehiclePlateText = view.findViewById(R.id.profileVehiclePlate);
         vehicleIdText = view.findViewById(R.id.profileVehicleId);
@@ -222,6 +236,50 @@ public class ProfileFragment extends Fragment {
 
         bindAssignedVehicle(personnel);
 
+        String teamName = personnel.getTeamName();
+        boolean hasTeam = teamName != null && !teamName.trim().isEmpty();
+        boolean isLeader = personnel.isTeamLeader();
+        if (teamRoleText != null) {
+            if (hasTeam) {
+                if (isLeader) {
+                    teamRoleText.setText("Leader of team " + teamName.trim());
+                } else {
+                    teamRoleText.setText("Member of team " + teamName.trim());
+                }
+                teamRoleText.setVisibility(View.VISIBLE);
+            } else {
+                teamRoleText.setVisibility(View.GONE);
+            }
+        }
+        if (teamDetailsCard != null) {
+            teamDetailsCard.setVisibility(hasTeam ? View.VISIBLE : View.GONE);
+        }
+        if (teamNameDetails != null) {
+            teamNameDetails.setText(hasTeam ? teamName.trim() : getString(R.string.profile_dash));
+        }
+        if (teamLeaderDetails != null) {
+            String leaderName = firstNonBlank(personnel.teamLeaderName,
+                    isLeader ? personnel.displayName() : null);
+            teamLeaderDetails.setText(leaderName == null
+                    ? getString(R.string.profile_dash) : leaderName);
+        }
+        if (teamMemberDetails != null) {
+            List<String> memberNames = new ArrayList<>();
+            if (personnel.teamMembers != null) {
+                for (com.example.ecowatchpersonnel1.data.models.CrewMember member
+                        : personnel.teamMembers) {
+                    if (member == null) continue;
+                    String memberName = firstNonBlank(
+                            member.getFullName(), member.getPersonnelId());
+                    if (memberName == null) continue;
+                    memberNames.add(memberName);
+                }
+            }
+            Collections.sort(memberNames, String.CASE_INSENSITIVE_ORDER);
+            teamMemberDetails.setText(memberNames.isEmpty()
+                    ? getString(R.string.profile_dash) : joinNames(memberNames));
+        }
+
         String url = firstNonBlank(personnel.profileImageUrl, personnel.profileImage,
                 personnel.avatarUrl);
         if (url == null) {
@@ -290,5 +348,14 @@ public class ProfileFragment extends Fragment {
             }
         }
         return null;
+    }
+
+    private static String joinNames(List<String> names) {
+        StringBuilder joined = new StringBuilder();
+        for (String name : names) {
+            if (joined.length() > 0) joined.append(", ");
+            joined.append(name);
+        }
+        return joined.toString();
     }
 }

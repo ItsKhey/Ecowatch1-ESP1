@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One member of the dispatched crew, as the resident sees it.
+
+    The same small card the administrator's assignment sheet uses: a 96dp box
+    with the person's picture on top and their full name under it, in the card
+    language of the rest of the app (14dp radius, hairline #06402B outline).
+
+    Two things are dropped from the administrator's version, because neither
+    means anything here. The availability dot said "this person is free to
+    send" — but this crew has already been sent. And the card is not
+    clickable, because a resident is being told what happened, not choosing
+    who does it.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/crewCard"
+    android:layout_width="96dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#06402B"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/crewCardAvatar"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:contentDescription="@string/report_detail_crewmate_avatar_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_person_default"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        <TextView
+            android:id="@+id/crewCardName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="Juan Dela Cruz" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

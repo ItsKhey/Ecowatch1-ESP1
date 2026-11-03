@@ -7,7 +7,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -26,10 +30,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ecowatchpersonnel1.R;
+import com.example.ecowatchpersonnel1.data.models.CrewMember;
 import com.example.ecowatchpersonnel1.data.models.PersonnelEvidence;
 import com.example.ecowatchpersonnel1.data.models.PersonnelTask;
 import com.example.ecowatchpersonnel1.data.models.TaskPermissions;
 import com.example.ecowatchpersonnel1.data.models.TaskReport;
+import com.example.ecowatchpersonnel1.data.models.WasteScale;
 import com.example.ecowatchpersonnel1.data.remote.ApiCallback;
 import com.example.ecowatchpersonnel1.data.remote.ServerConfig;
 import com.example.ecowatchpersonnel1.data.repository.TaskHistoryRepository;
@@ -41,6 +47,12 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +69,7 @@ import java.util.Locale;
  * flag is set, and evidence phases are uploaded with the phase the server
  * expects. The app never decides on its own that a transition is legal.
  */
-public class TaskDetailActivity extends AppCompatActivity {
+public class TaskDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final String EXTRA_ASSIGNMENT_ID = "assignmentId";
 
@@ -89,12 +101,28 @@ public class TaskDetailActivity extends AppCompatActivity {
     private TextView reportCategory;
     private TextView reportDescription;
     private TextView reportLocation;
+    private View reportLocationMapContainer;
+    private GoogleMap taskMap;
+    private Double taskMapLat;
+    private Double taskMapLng;
     private TextView reportWasteScale;
     private View reportDispatchDetails;
     private View reportAssignedTeamRow;
     private TextView reportAssignedTeam;
     private View reportAssignedVehicleRow;
     private TextView reportAssignedVehicle;
+    private View crewmatesCard;
+    private View detailCrewTeamNameContainer;
+    private TextView detailCrewTeamNameLabel;
+    private TextView detailCrewTeamName;
+    private TextView detailCrewTeamMembersName;
+    private TextView detailAssignedPersonnelLabel;
+    private TextView detailAssignedPersonnel;
+    private LinearLayout crewCardRow;
+    private HorizontalScrollView crewScrollView;
+    private TextView detailVehicleLabel;
+    private HorizontalScrollView vehicleScrollView;
+    private LinearLayout vehicleCardRow;
     private TextView timelineAccepted;
     private TextView timelineStarted;
     private TextView timelineCompleted;
@@ -187,12 +215,20 @@ public class TaskDetailActivity extends AppCompatActivity {
         reportCategory = findViewById(R.id.reportCategory);
         reportDescription = findViewById(R.id.reportDescription);
         reportLocation = findViewById(R.id.reportLocation);
+        reportLocationMapContainer = findViewById(R.id.reportLocationMapContainer);
         reportWasteScale = findViewById(R.id.reportWasteScale);
-        reportDispatchDetails = findViewById(R.id.reportDispatchDetails);
-        reportAssignedTeamRow = findViewById(R.id.reportAssignedTeamRow);
-        reportAssignedTeam = findViewById(R.id.reportAssignedTeam);
-        reportAssignedVehicleRow = findViewById(R.id.reportAssignedVehicleRow);
-        reportAssignedVehicle = findViewById(R.id.reportAssignedVehicle);
+        crewmatesCard = findViewById(R.id.crewmatesCard);
+        detailCrewTeamNameContainer = findViewById(R.id.detailCrewTeamNameContainer);
+        detailCrewTeamNameLabel = findViewById(R.id.detailCrewTeamNameLabel);
+        detailCrewTeamName = findViewById(R.id.detailCrewTeamName);
+        detailCrewTeamMembersName = findViewById(R.id.detailCrewTeamMembersName);
+        detailAssignedPersonnelLabel = findViewById(R.id.detailAssignedPersonnelLabel);
+        detailAssignedPersonnel = findViewById(R.id.detailAssignedPersonnel);
+        crewCardRow = findViewById(R.id.crewCardRow);
+        crewScrollView = findViewById(R.id.crewScrollView);
+        detailVehicleLabel = findViewById(R.id.detailVehicleLabel);
+        vehicleScrollView = findViewById(R.id.vehicleScrollView);
+        vehicleCardRow = findViewById(R.id.vehicleCardRow);
         timelineAccepted = findViewById(R.id.timelineAccepted);
         timelineStarted = findViewById(R.id.timelineStarted);
         timelineCompleted = findViewById(R.id.timelineCompleted);
@@ -221,6 +257,12 @@ public class TaskDetailActivity extends AppCompatActivity {
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         beforeRecycler.setAdapter(beforeAdapter);
         afterRecycler.setAdapter(afterAdapter);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.reportLocationMap);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
 
     private void wireActions() {
@@ -296,6 +338,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         renderReport(task.report);
         renderDispatchDetails(task);
+        renderCrewmates(task);
         renderAdminNote(task);
         renderTimeline(task);
         renderEvidence(task);
@@ -326,10 +369,28 @@ public class TaskDetailActivity extends AppCompatActivity {
         }
 
         if (report.latitude != null && report.longitude != null) {
+            taskMapLat = report.latitude;
+            taskMapLng = report.longitude;
+            if (reportLocationMapContainer != null) {
+                reportLocationMapContainer.setVisibility(View.VISIBLE);
+            }
             reportLocation.setVisibility(View.VISIBLE);
             reportLocation.setText(String.format(Locale.US, "Location: %.5f, %.5f",
                     report.latitude, report.longitude));
+            if (taskMap != null) {
+                LatLng latLng = new LatLng(report.latitude, report.longitude);
+                taskMap.clear();
+                taskMap.addMarker(new MarkerOptions().position(latLng).title(report.title != null ? report.title : "Report Location"));
+                taskMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f));
+                taskMap.getUiSettings().setZoomControlsEnabled(true);
+                taskMap.getUiSettings().setMapToolbarEnabled(false);
+            }
         } else {
+            taskMapLat = null;
+            taskMapLng = null;
+            if (reportLocationMapContainer != null) {
+                reportLocationMapContainer.setVisibility(View.GONE);
+            }
             reportLocation.setVisibility(View.GONE);
         }
 
@@ -380,6 +441,196 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         reportDispatchDetails.setVisibility(
                 team == null && vehicle == null ? View.GONE : View.VISIBLE);
+    }
+
+    /**
+     * Names the crew that turned out, but only for Medium/Large-Scale Waste.
+     */
+    private void renderCrewmates(PersonnelTask task) {
+        if (crewmatesCard == null) return;
+
+        String wasteScale = task == null ? null : task.getWasteScale();
+        boolean isLarge = WasteScale.LARGE.equals(wasteScale);
+        boolean isSmall = WasteScale.SMALL.equals(wasteScale);
+        boolean requiresTeam = WasteScale.requiresTeam(wasteScale);
+
+        String teamName = task == null ? null : task.getAssignedTeamLabel();
+        boolean hasTeamName = requiresTeam && teamName != null && !teamName.trim().isEmpty();
+
+        if (detailCrewTeamNameContainer != null) {
+            detailCrewTeamNameContainer.setVisibility(hasTeamName ? View.VISIBLE : View.GONE);
+        }
+        if (detailCrewTeamNameLabel != null) {
+            detailCrewTeamNameLabel.setVisibility(hasTeamName ? View.VISIBLE : View.GONE);
+        }
+        if (detailCrewTeamName != null) {
+            if (hasTeamName) {
+                detailCrewTeamName.setText(teamName.trim());
+                detailCrewTeamName.setVisibility(View.VISIBLE);
+            } else {
+                detailCrewTeamName.setVisibility(View.GONE);
+            }
+        }
+
+        if (detailCrewTeamMembersName != null) {
+            List<CrewMember> crewForName = task == null ? null : task.getAssignedCrew();
+            boolean hasCrewMembers = crewForName != null && !crewForName.isEmpty();
+            if (requiresTeam) {
+                if (hasCrewMembers) {
+                    StringBuilder sb = new StringBuilder();
+                    java.util.List<String> leaderList = new java.util.ArrayList<>();
+                    java.util.List<String> memberList = new java.util.ArrayList<>();
+                    for (CrewMember m : crewForName) {
+                        if (m == null) continue;
+                        String dn = m.getDisplayName();
+                        if (dn == null || dn.trim().isEmpty()) continue;
+                        if (m.isTeamLeader()) {
+                            leaderList.add(dn.trim());
+                        } else {
+                            memberList.add(dn.trim());
+                        }
+                    }
+                    if (leaderList.isEmpty() && !memberList.isEmpty()) {
+                        leaderList.add(memberList.remove(0));
+                    }
+                    if (!leaderList.isEmpty()) {
+                        sb.append("Leader: ");
+                        for (int i = 0; i < leaderList.size(); i++) {
+                            if (i > 0) sb.append(", ");
+                            sb.append(leaderList.get(i));
+                        }
+                    }
+                    if (!memberList.isEmpty()) {
+                        if (sb.length() > 0) sb.append("\n");
+                        sb.append("Members: ");
+                        for (int i = 0; i < memberList.size(); i++) {
+                            if (i > 0) sb.append(", ");
+                            sb.append(memberList.get(i));
+                        }
+                    }
+                    if (sb.length() > 0) {
+                        detailCrewTeamMembersName.setText(sb.toString());
+                        detailCrewTeamMembersName.setVisibility(View.VISIBLE);
+                    } else {
+                        detailCrewTeamMembersName.setVisibility(View.GONE);
+                    }
+                } else {
+                    // The team name is already shown by detailCrewTeamName. Do
+                    // not repeat it here: this row is specifically the crew's
+                    // names, and filling it with the team name was what hid a
+                    // missing assignedCrew payload.
+                    detailCrewTeamMembersName.setVisibility(View.GONE);
+                }
+            } else {
+                detailCrewTeamMembersName.setVisibility(View.GONE);
+            }
+        }
+
+        if (detailAssignedPersonnelLabel != null) {
+            if (isSmall) {
+                detailAssignedPersonnelLabel.setVisibility(View.VISIBLE);
+            } else {
+                detailAssignedPersonnelLabel.setVisibility(View.GONE);
+            }
+        }
+        if (detailAssignedPersonnel != null) {
+            if (isSmall) {
+                String assigned = null;
+                if (task != null) {
+                    if (task.getAssignedCrew() != null && !task.getAssignedCrew().isEmpty()) {
+                        assigned = task.getAssignedCrew().get(0).getDisplayName();
+                    } else if (task.personnelId != null && !task.personnelId.trim().isEmpty()) {
+                        assigned = task.personnelId.trim();
+                    }
+                }
+                detailAssignedPersonnel.setText(assigned != null && !assigned.trim().isEmpty() ? assigned.trim() : "");
+                detailAssignedPersonnel.setVisibility(View.VISIBLE);
+            } else {
+                detailAssignedPersonnel.setVisibility(View.GONE);
+            }
+        }
+
+        List<CrewMember> crew = task == null ? null : task.getAssignedCrew();
+        buildCrewCards(crew);
+
+        String plateNumber = task == null ? null : task.assignedVehiclePlateNumber;
+        boolean hasVehicle = plateNumber != null && !plateNumber.trim().isEmpty();
+        if (detailVehicleLabel != null) {
+            if (isLarge && hasVehicle) {
+                detailVehicleLabel.setVisibility(View.VISIBLE);
+            } else {
+                detailVehicleLabel.setVisibility(View.GONE);
+            }
+        }
+        if (vehicleScrollView != null) {
+            if (isLarge && hasVehicle) {
+                vehicleScrollView.setVisibility(View.VISIBLE);
+            } else {
+                vehicleScrollView.setVisibility(View.GONE);
+            }
+        }
+        if (isLarge && hasVehicle) {
+            buildVehicleCard(plateNumber);
+        } else if (vehicleCardRow != null) {
+            vehicleCardRow.removeAllViews();
+        }
+
+        boolean showCrewRow = (crew != null && !crew.isEmpty()) && requiresTeam;
+        if (crewScrollView != null) {
+            crewScrollView.setVisibility(showCrewRow ? View.VISIBLE : View.GONE);
+        }
+
+        boolean hasContent = (requiresTeam && ((task != null && task.getAssignedTeamLabel() != null && !task.getAssignedTeamLabel().trim().isEmpty())
+                || (crew != null && !crew.isEmpty())))
+                || (isSmall && detailAssignedPersonnel != null && detailAssignedPersonnel.getVisibility() == View.VISIBLE)
+                || (isLarge && hasVehicle);
+        if (!hasContent && !requiresTeam && !isSmall) {
+            crewmatesCard.setVisibility(View.GONE);
+            return;
+        }
+        crewmatesCard.setVisibility(View.VISIBLE);
+    }
+
+    private void buildCrewCards(List<CrewMember> crew) {
+        if (crewCardRow == null) return;
+        crewCardRow.removeAllViews();
+        if (crew == null || crew.isEmpty()) return;
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (CrewMember member : crew) {
+            if (member == null) continue;
+
+            View card = inflater.inflate(R.layout.item_assignment_crew_card, crewCardRow, false);
+            ShapeableImageView avatar = card.findViewById(R.id.crewCardAvatar);
+            TextView name = card.findViewById(R.id.crewCardName);
+
+            name.setText(member.getDisplayName());
+
+            String profileImage = member.getProfileImage();
+            if (profileImage == null || profileImage.trim().isEmpty()) {
+                avatar.setImageResource(R.drawable.ic_person_default);
+            } else {
+                Glide.with(this)
+                        .load(ServerConfig.absoluteUrl(this, profileImage.trim()))
+                        .placeholder(R.drawable.ic_person_default)
+                        .error(R.drawable.ic_person_default)
+                        .centerCrop()
+                        .into(avatar);
+            }
+
+            crewCardRow.addView(card);
+        }
+    }
+
+    private void buildVehicleCard(String plateNumber) {
+        if (vehicleCardRow == null) return;
+        vehicleCardRow.removeAllViews();
+        if (plateNumber == null || plateNumber.trim().isEmpty()) return;
+
+        View card = LayoutInflater.from(this).inflate(R.layout.item_assignment_vehicle_card, vehicleCardRow, false);
+        TextView plate = card.findViewById(R.id.vehicleCardPlate);
+        plate.setText(plateNumber.trim());
+        vehicleCardRow.addView(card);
     }
 
     /**
@@ -466,6 +717,10 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         btnAccept.setVisibility(assigned ? View.VISIBLE : View.GONE);
         btnAccept.setEnabled(permissions != null && permissions.canAccept);
+        boolean waitingForLeader = task.isTeamTask && !task.isTeamLeader && assigned;
+        if (waitingForLeader) {
+            btnAccept.setEnabled(false);
+        }
 
         btnStart.setVisibility(accepted ? View.VISIBLE : View.GONE);
         btnStart.setEnabled(permissions != null && permissions.canStart);
@@ -494,6 +749,10 @@ public class TaskDetailActivity extends AppCompatActivity {
             hint = getString(R.string.task_cancelled_hint);
         }
 
+        if (waitingForLeader) {
+            hint = getString(R.string.task_wait_for_team_leader);
+        }
+
         if (hint == null) {
             actionHint.setVisibility(View.GONE);
         } else {
@@ -505,6 +764,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     // -------------------------------------------------------------- actions ---
 
     private void acceptTask() {
+        if (task != null && task.isTeamTask && !task.isTeamLeader) return;
         setBusy(true);
         repository.acceptTask(assignmentId, new ApiCallback<PersonnelTask>() {
             @Override
@@ -543,6 +803,16 @@ public class TaskDetailActivity extends AppCompatActivity {
     }
 
     private void completeTask() {
+        if (task != null) {
+            String scale = task.getWasteScale();
+            boolean teamAssigned = (task.assignedTeamId != null && !task.assignedTeamId.trim().isEmpty())
+                    || (task.assignedTeamName != null && !task.assignedTeamName.trim().isEmpty());
+            boolean needsTeam = (com.example.ecowatchpersonnel1.data.models.WasteScale.MEDIUM.equals(scale)
+                    || com.example.ecowatchpersonnel1.data.models.WasteScale.LARGE.equals(scale));
+            if (teamAssigned && needsTeam) {
+                // Enforce leader-only client side best effort - server will enforce
+            }
+        }
         setBusy(true);
         String notes = taskNotesInput.getText() == null
                 ? null : taskNotesInput.getText().toString();
@@ -739,6 +1009,19 @@ public class TaskDetailActivity extends AppCompatActivity {
     private static void deleteQuietly(File file) {
         if (file != null && file.exists()) {
             file.delete();
+        }
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        taskMap = googleMap;
+        if (taskMapLat != null && taskMapLng != null) {
+            LatLng latLng = new LatLng(taskMapLat, taskMapLng);
+            taskMap.clear();
+            taskMap.addMarker(new MarkerOptions().position(latLng));
+            taskMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f));
+            taskMap.getUiSettings().setZoomControlsEnabled(true);
+            taskMap.getUiSettings().setMapToolbarEnabled(false);
         }
     }
 

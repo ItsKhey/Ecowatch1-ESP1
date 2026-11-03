@@ -24,4 +24,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Ecowatch1-ESP1"
-include(":app", ":app-personnel")
+include(":core")
+include(":data")
+include(":notifications")
+include(":app-personnel")

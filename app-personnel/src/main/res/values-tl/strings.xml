@@ -100,8 +100,6 @@
 
     <!-- Notification settings -->
     <!-- Shown by Android itself in system settings, so these cannot stay English. -->
-    <string name="notif_channel_name">Mga Abiso sa Gawain ng EcoWatch</string>
-    <string name="notif_channel_description">Mga italaga at update para sa iyong mga gawaing paglilinis</string>
     <string name="notif_section_tasks">MGA PAG-ATOS NG GAWAIN</string>
     <string name="notif_section_announcements">MGA PAALALA</string>
     <string name="notif_section_preferences">MGA ALERTO</string>
@@ -154,9 +152,6 @@
         magisa o bahagi ng isang team na may sasakyan.
     -->
     <string name="waste_scale_label">Laki ng Basura</string>
-    <string name="waste_scale_small">Maliitang Kalakip na Basura</string>
-    <string name="waste_scale_medium">Katamtamang Kalakip na Basura</string>
-    <string name="waste_scale_large">Malaking Kalakip na Basura</string>
     <string name="assigned_team_label">Itinalagang Team</string>
     <string name="assigned_vehicle_label">Itinalagang Sasakyan</string>
     <string name="about_body">Tungkol sa EcoWatch Personnel\n\nAng EcoWatch Personnel ay ang kaakibat na app para sa mga tauhan ng waste-management na nagpapatupad ng paglinis na inuulat ng mga naninirahan sa EcoWatch. Ito ang labas na bahagi ng isang sistema: nag-uulat ang mga naninirahan, sinusuri at itinatakda ng mga administrator, at dito tinatanggap ng assigned cleaner ang gawain, kinukunan ng larawan ng lugar bago at pagkatapos, at ipinapasa ang trabaho para sa aprubasyon.\n\nMula sa ulat ng naninirahan ang bawat gawain sa app na ito. Walang handang inilalagay dito, kaya palaging binubuo ng isang gawain ang lugar at ang problema na inilarawan ng isang naninirahan.\n\nAno ang magagawa mo dito\n\nTanggapin ang lahat ng gawain\nItinatakda ng mga administrator ang mga inuulat na problema sa mga cleaner na sakop ang lugar na iyon. Lahat ng iyong gawain ay lumalabas sa Aking mga Gawain, at nananatili sa Kasaysayan ng Gawain ang mga lumipat na sa iba.\n\nTanggapin at subukan ang trabaho\nAng gawain ay lilipat mula Assigned tungo Accepted, In Progress, at Completed. Nakatala ang oras ng bawat hakbang, kaya nakikita sa kasaysayan kung kailan kinuha ang trabaho at kung kailan ito natapos.\n\nPatunayan ang paglinis\nKailangan ang mga larawan bago at pagkatapos. Ang larawan bago ay dokumentasyon ng naiulat na problema; ang larawan pagkatapos ay nagpapakita ng nagawa ng iyong team. Sinusuri ito ng administrator bago isara ang gawain, at nakikita ng mga naninirahan kapag nalutas na ang kanilang ulat.\n\nNaiisa sa mga gawain mo\nSinasabi ng app sa iyo kapag may bagong trabaho, at kapag naaprubahan na ang gawang tinapos mo, kaya hindi ka na nalilito.\n\nPanatilihin ang iyong tala\nItinatago ng Kasaysayan ng Gawain ang bawat gawain sa device na ito. Mababasa mo kung ano ang ginawa mo, kailan mo ito ginawa, at ano ang ipinasa mo, kahit walang koneksyon.\n\nAng aming layunin\nNabuo ang EcoWatch para gawing makita at mapagkumpanya ang mga paglinis ng komunidad. Nag-uulat ang mga naninirahan, naglilinis ang tauhan, at sinusuri ng administrator. Makita. Iulat. Linisin. Patunayan.</string>

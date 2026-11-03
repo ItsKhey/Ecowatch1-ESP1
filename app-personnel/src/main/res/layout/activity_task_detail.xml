@@ -203,67 +203,6 @@
                         android:textStyle="bold"
                         tools:text="Large-Scale Waste" />
 
-                    <LinearLayout
-                        android:id="@+id/reportDispatchDetails"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <LinearLayout
-                            android:id="@+id/reportAssignedTeamRow"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/reportAssignedTeamLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/assigned_team_label"
-                                android:textColor="@color/faint_green_color"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/reportAssignedTeam"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_weight="1"
-                                android:textColor="@color/green"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                tools:text="Northside Crew" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/reportAssignedVehicleRow"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/reportAssignedVehicleLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/assigned_vehicle_label"
-                                android:textColor="@color/faint_green_color"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/reportAssignedVehicle"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_weight="1"
-                                android:textColor="@color/green"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                tools:text="ABC-123 (Garbage Truck)" />
-                        </LinearLayout>
-                    </LinearLayout>
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/reportImage"
@@ -285,11 +224,184 @@
                         android:alpha="0.9"
                         tools:text="A pile of garbage has been sitting by the creek for days." />
 
+                    <!--
+                        Crew that turned out with this assignment. The main label
+                        says "Crewmates:" and the cards are the same small crew/vehicle
+                        cards used elsewhere in the app.
+                    -->
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:background="?attr/colorOutlineVariant" />
+
+                    <LinearLayout
+                        android:id="@+id/crewmatesCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="vertical">
+
+                        <!--only shows if the task is medium/large scaled waste-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/report_detail_crewmates"
+                            android:textAllCaps="true"
+                            android:textColor="@color/green"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.08"
+                            android:textStyle="bold" />
+
+                        <!-- Crew Team Name Container -->
+                        <LinearLayout
+                            android:id="@+id/detailCrewTeamNameContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <!-- Label -->
+                            <TextView
+                                android:id="@+id/detailCrewTeamNameLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Team Name:"
+                                android:textColor="@color/green"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <!-- Team Name Detail -->
+                            <TextView
+                                android:id="@+id/detailCrewTeamName"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:textColor="@color/green"
+                                android:textSize="14sp"
+                                android:lineSpacingExtra="2dp"
+                                tools:text="Team Alpha" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/detailCrewTeamMembersName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/green"
+                            android:textSize="14sp"
+                            android:visibility="gone"
+                            android:lineSpacingExtra="2dp"
+                            tools:text="Leader: Juan Dela Cruz\nMembers: Maria Santos, Pedro Reyes"
+                            tools:visibility="visible" />
+
+
+                        <!-- only shows if the report is small-scaled waste (below) -->
+                        <TextView
+                            android:id="@+id/detailAssignedPersonnelLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:text="Assigned Personnel"
+                            android:textAllCaps="true"
+                            android:textColor="@color/faint_green_color"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.08"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/detailAssignedPersonnel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:text="Mark Logan"
+                            android:textColor="@color/green"
+                            android:textSize="15sp" />
+
+                        <HorizontalScrollView
+                            android:id="@+id/crewScrollView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:clipToPadding="false"
+                            android:scrollbars="none">
+
+                            <LinearLayout
+                                android:id="@+id/crewCardRow"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal" />
+                        </HorizontalScrollView>
+
+                        <!-- only shows in larg scaled waste -->
+                        <TextView
+                            android:id="@+id/detailVehicleLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/report_detail_vehicle"
+                            android:textAllCaps="true"
+                            android:textColor="@color/faint_green_color"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.08"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <HorizontalScrollView
+                            android:id="@+id/vehicleScrollView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:clipToPadding="false"
+                            android:scrollbars="none"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <LinearLayout
+                                android:id="@+id/vehicleCardRow"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal" />
+                        </HorizontalScrollView>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Location"
+                        android:textAllCaps="true"
+                        android:textColor="@color/green"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.08"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:id="@+id/reportLocationMapContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="10dp">
+
+
+                        <fragment
+                            android:id="@+id/reportLocationMap"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </FrameLayout>
+
                     <TextView
                         android:id="@+id/reportLocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="6dp"
                         android:textColor="@color/faint_green_color"
                         android:textSize="12sp"
                         android:visibility="gone"
