@@ -56,6 +56,20 @@ public class TaskHistoryEntity {
     @ColumnInfo(name = "reportStatus")
     public String reportStatus;
 
+    /**
+     * True while this assignment cycle includes an administrator revision.
+     *
+     * <p>Saved rather than derived from the report status: a task sent back for
+     * revision is IN_PROGRESS again, which is also what a brand-new task looks
+     * like. Without the server's flag the history tab could not tell them apart.
+     */
+    @ColumnInfo(name = "revisionRequested")
+    public boolean revisionRequested;
+
+    /** When the administrator last sent this task back, or null. */
+    @ColumnInfo(name = "revisionRequestedAt")
+    public String revisionRequestedAt;
+
     @ColumnInfo(name = "reportTitle")
     public String reportTitle;
 
@@ -134,6 +148,8 @@ public class TaskHistoryEntity {
         entity.reportId = task.reportId;
         entity.clusterId = task.clusterId;
         entity.status = task.status;
+        entity.revisionRequested = task.isRevisionRequested();
+        entity.revisionRequestedAt = task.latestRevisionAt();
         entity.beforeCount = task.beforeCount;
         entity.afterCount = task.afterCount;
         entity.assignedAt = task.assignedAt;

@@ -453,6 +453,15 @@
                         tools:text="Started: Mar 3, 2026" />
 
                     <TextView
+                        android:id="@+id/timelineRevisions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/faint_green_color"
+                        android:textSize="13sp"
+                        tools:text="Revision Started: Mar 3, 2026" />
+
+                    <TextView
                         android:id="@+id/timelineCompleted"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
