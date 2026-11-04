@@ -30,7 +30,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
                 PersonnelNotificationEntity.class,
                 PersonnelNotificationTombstone.class
         },
-        version = 4,
+        version = 5,
         exportSchema = false
 )
 public abstract class PersonnelDatabase extends RoomDatabase {
@@ -144,6 +144,31 @@ public abstract class PersonnelDatabase extends RoomDatabase {
     };
 
     /**
+     * Adds the revision flag and timestamp to a saved assignment.
+     *
+     * <p>Both are nullable/zero for existing rows: a history written before this
+     * upgrade cannot know whether the work was ever sent back, and guessing from
+     * a status that reads IN_PROGRESS would mark fresh work as revised. The next
+     * sync fills them from the server.
+     */
+    private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            if (!hasColumn(database, "task_history", "revisionRequested")) {
+                database.execSQL(
+                        "ALTER TABLE `task_history` ADD COLUMN `revisionRequested` "
+                                + "INTEGER NOT NULL DEFAULT 0"
+                );
+            }
+            if (!hasColumn(database, "task_history", "revisionRequestedAt")) {
+                database.execSQL(
+                        "ALTER TABLE `task_history` ADD COLUMN `revisionRequestedAt` TEXT"
+                );
+            }
+        }
+    };
+
+    /**
      * True when the table already has the column.
      *
      * <p>Read with PRAGMA rather than a plain query, because the answer has to
@@ -181,7 +206,8 @@ public abstract class PersonnelDatabase extends RoomDatabase {
                                     PersonnelDatabase.class,
                                     DATABASE_NAME
                             )
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4,
+                                    MIGRATION_4_5)
                             .build();
                 }
             }

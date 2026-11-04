@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.ecowatchpersonnel1.R;
-import com.example.ecowatchpersonnel1.data.local.TaskHistoryDao;
 import com.example.ecowatchpersonnel1.data.local.TaskHistoryEntity;
 import com.example.ecowatchpersonnel1.data.models.PersonnelTask;
 import com.example.ecowatchpersonnel1.data.models.TaskStatusRules;
@@ -31,9 +30,7 @@ import com.example.ecowatchpersonnel1.ui.tasks.TaskDetailActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Every task this cleaner has been given, read from the device database.
@@ -46,7 +43,9 @@ import java.util.Map;
  *
  * <p>Filters run in memory over the saved rows. The table is one cleaner's own
  * assignments, bounded by what they were ever given, so a tab tap stays instant
- * instead of costing a request.
+ * instead of costing a request. The four pills group the statuses so every saved
+ * row stays reachable: Revisions covers work an administrator sent back for
+ * another pass, while Completed includes finished work still waiting for approval.
  */
 public class HistoryFragment extends Fragment {
 
@@ -61,25 +60,20 @@ public class HistoryFragment extends Fragment {
     private ImageButton clearSearchBtn;
     private ImageButton sortBtn;
 
-    private TextView tabAll, tabActive, tabAssigned, tabAccepted, tabInProgress, tabUnderApproval, tabCompleted, tabCancelled;
+    private TextView tabAll, tabRevisions, tabCompleted, tabCancelled;
 
     /** Every saved row, unfiltered. The tabs and the search read from here. */
     private final List<TaskHistoryEntity> allEntries = new ArrayList<>();
-    /** Per-status totals, recomputed from {@link #allEntries}. */
-    private final Map<String, Integer> statusCounts = new LinkedHashMap<>();
 
     private String activeFilter = FILTER_ALL;
     private String searchQuery = "";
     private boolean sortNewestFirst = true;
     private String personnelId;
 
-    /**
-     * Not a real assignment status. The server has no UNDER_APPROVAL status, so
-     * this key stands for a completed task whose report is still under review.
-     */
-    private static final String FILTER_UNDER_APPROVAL = "UNDER_APPROVAL";
-    private static final String FILTER_ACTIVE = "ACTIVE";
+    /** The four visible pills. Each one is a group, not a single server status. */
     private static final String FILTER_ALL = "ALL";
+    private static final String FILTER_REVISIONS = "REVISIONS";
+    private static final String FILTER_COMPLETED = "COMPLETED";
     private static final String FILTER_CANCELLED = PersonnelTask.STATUS_CANCELLED;
 
     @Nullable
@@ -146,21 +140,13 @@ public class HistoryFragment extends Fragment {
 
     private void setupTabs(View view) {
         tabAll = view.findViewById(R.id.tabHistoryAll);
-        tabActive = view.findViewById(R.id.tabHistoryActive);
-        tabAssigned = view.findViewById(R.id.tabHistoryAssigned);
-        tabAccepted = view.findViewById(R.id.tabHistoryAccepted);
-        tabInProgress = view.findViewById(R.id.tabHistoryInProgress);
-        tabUnderApproval = view.findViewById(R.id.tabHistoryUnderApproval);
+        tabRevisions = view.findViewById(R.id.tabHistoryRevisions);
         tabCompleted = view.findViewById(R.id.tabHistoryCompleted);
         tabCancelled = view.findViewById(R.id.tabHistoryCancelled);
 
         if (tabAll != null) tabAll.setOnClickListener(v -> selectTab(FILTER_ALL));
-        if (tabActive != null) tabActive.setOnClickListener(v -> selectTab(FILTER_ACTIVE));
-        if (tabAssigned != null) tabAssigned.setOnClickListener(v -> selectTab(PersonnelTask.STATUS_ASSIGNED));
-        if (tabAccepted != null) tabAccepted.setOnClickListener(v -> selectTab(PersonnelTask.STATUS_ACCEPTED));
-        if (tabInProgress != null) tabInProgress.setOnClickListener(v -> selectTab(PersonnelTask.STATUS_IN_PROGRESS));
-        if (tabUnderApproval != null) tabUnderApproval.setOnClickListener(v -> selectTab(FILTER_UNDER_APPROVAL));
-        if (tabCompleted != null) tabCompleted.setOnClickListener(v -> selectTab(PersonnelTask.STATUS_COMPLETED));
+        if (tabRevisions != null) tabRevisions.setOnClickListener(v -> selectTab(FILTER_REVISIONS));
+        if (tabCompleted != null) tabCompleted.setOnClickListener(v -> selectTab(FILTER_COMPLETED));
         if (tabCancelled != null) tabCancelled.setOnClickListener(v -> selectTab(FILTER_CANCELLED));
 
         updateTabPillUI();
@@ -174,12 +160,8 @@ public class HistoryFragment extends Fragment {
 
     private void updateTabPillUI() {
         updateSingleTabUI(tabAll, FILTER_ALL.equals(activeFilter));
-        updateSingleTabUI(tabActive, FILTER_ACTIVE.equals(activeFilter));
-        updateSingleTabUI(tabAssigned, PersonnelTask.STATUS_ASSIGNED.equals(activeFilter));
-        updateSingleTabUI(tabAccepted, PersonnelTask.STATUS_ACCEPTED.equals(activeFilter));
-        updateSingleTabUI(tabInProgress, PersonnelTask.STATUS_IN_PROGRESS.equals(activeFilter));
-        updateSingleTabUI(tabUnderApproval, FILTER_UNDER_APPROVAL.equals(activeFilter));
-        updateSingleTabUI(tabCompleted, PersonnelTask.STATUS_COMPLETED.equals(activeFilter));
+        updateSingleTabUI(tabRevisions, FILTER_REVISIONS.equals(activeFilter));
+        updateSingleTabUI(tabCompleted, FILTER_COMPLETED.equals(activeFilter));
         updateSingleTabUI(tabCancelled, FILTER_CANCELLED.equals(activeFilter));
     }
 
@@ -249,24 +231,6 @@ public class HistoryFragment extends Fragment {
             }
             applyFilter();
         });
-
-        // Recounted here rather than read from the DAO's group-by, so a tab can
-        // never disagree with the rows a tap produces: both come from the same
-        // list, at the same moment.
-        repository.observeStatusCounts(personnelId)
-                .observe(getViewLifecycleOwner(), this::onStatusCounts);
-    }
-
-    private void onStatusCounts(List<TaskHistoryDao.TaskStatusCount> counts) {
-        statusCounts.clear();
-        if (counts != null) {
-            for (TaskHistoryDao.TaskStatusCount bucket : counts) {
-                if (bucket != null && bucket.status != null) {
-                    statusCounts.put(bucket.status.toUpperCase(), bucket.total);
-                }
-            }
-        }
-        updateTabCounts();
     }
 
     /**
@@ -308,19 +272,40 @@ public class HistoryFragment extends Fragment {
     private boolean matchesFilter(TaskHistoryEntity entry) {
         if (entry == null) return false;
         if (FILTER_ALL.equals(activeFilter)) return true;
-        if (FILTER_ACTIVE.equals(activeFilter)) return isActive(entry);
-        if (FILTER_UNDER_APPROVAL.equals(activeFilter)) return isUnderApproval(entry);
-        if (PersonnelTask.STATUS_COMPLETED.equals(activeFilter)) {
-            return PersonnelTask.STATUS_COMPLETED.equals(entry.status) && !isUnderApproval(entry);
-        }
-        if (FILTER_CANCELLED.equals(activeFilter)) {
-            return PersonnelTask.STATUS_CANCELLED.equals(entry.status);
-        }
-        return activeFilter.equalsIgnoreCase(entry.status);
+        return activeFilter.equals(groupOf(entry));
     }
 
-    private boolean isActive(TaskHistoryEntity entry) {
-        return TaskStatusRules.isActive(entry.status);
+    /**
+     * The one pill a saved row belongs to, or null for work still in progress.
+     *
+     * <p>Cancelled wins over revision, and revision wins over completed, so a
+     * task that was both sent back and resubmitted is counted once rather than
+     * appearing in two pills. Rows that are still assigned, accepted or in
+     * progress have no pill of their own anymore and stay reachable under All.
+     */
+    private String groupOf(TaskHistoryEntity entry) {
+        if (entry == null) return null;
+        if (PersonnelTask.STATUS_CANCELLED.equalsIgnoreCase(entry.status)) {
+            return FILTER_CANCELLED;
+        }
+        if (isRevision(entry)) return FILTER_REVISIONS;
+        if (isCompleted(entry)) return FILTER_COMPLETED;
+        return null;
+    }
+
+    private boolean isRevision(TaskHistoryEntity entry) {
+        return entry.revisionRequested
+                || TaskStatusRules.isRevision(entry.status, entry.reportStatus);
+    }
+
+    /**
+     * Finished work, including a completion whose report is still under review.
+     * Those rows have no dedicated pill anymore, so leaving them out would make
+     * them visible only under All.
+     */
+    private boolean isCompleted(TaskHistoryEntity entry) {
+        return PersonnelTask.STATUS_COMPLETED.equalsIgnoreCase(entry.status)
+                || isUnderApproval(entry);
     }
 
     /**
@@ -340,6 +325,7 @@ public class HistoryFragment extends Fragment {
                 || contains(entry.reportCategory, searchQuery)
                 || contains(entry.reportId, searchQuery)
                 || contains(entry.completionNotes, searchQuery)
+                || contains(entry.reportStatus, searchQuery)
                 || contains(entry.status, searchQuery);
     }
 
@@ -398,40 +384,33 @@ public class HistoryFragment extends Fragment {
     }
 
     /**
-     * Labels every tab with the number of saved rows behind it.
+     * Labels every pill with the number of saved rows behind it.
      *
-     * <p>Counted from the database so the number is the number a tap will
-     * produce. Under Approval and Completed are reported from the same derived
-     * check the filter uses, so they cannot overlap.
+     * <p>Counted from the same list and by the same grouping the filter uses, so
+     * a pill's number is always the number of rows a tap will produce. Revisions
+     * follows the revision rule in {@link TaskStatusRules}; Completed includes
+     * work whose report is still under approval. Each saved row therefore
+     * appears under All and at most one of the other three pills.
      */
     private void updateTabCounts() {
         int total = allEntries.size();
-        int active = 0;
-        int assigned = 0;
-        int accepted = 0;
-        int inProgress = 0;
-        int underApproval = 0;
+        int revisions = 0;
         int completed = 0;
         int cancelled = 0;
 
         for (TaskHistoryEntity entry : allEntries) {
-            if (entry == null) continue;
-            if (isActive(entry)) active++;
-            if (isUnderApproval(entry)) underApproval++;
-            if (PersonnelTask.STATUS_CANCELLED.equals(entry.status)) cancelled++;
-            if (PersonnelTask.STATUS_ASSIGNED.equals(entry.status)) assigned++;
-            else if (PersonnelTask.STATUS_ACCEPTED.equals(entry.status)) accepted++;
-            else if (PersonnelTask.STATUS_IN_PROGRESS.equals(entry.status)) inProgress++;
-            else if (PersonnelTask.STATUS_COMPLETED.equals(entry.status)
-                    && !isUnderApproval(entry)) completed++;
+            String group = groupOf(entry);
+            if (FILTER_REVISIONS.equals(group)) {
+                revisions++;
+            } else if (FILTER_COMPLETED.equals(group)) {
+                completed++;
+            } else if (FILTER_CANCELLED.equals(group)) {
+                cancelled++;
+            }
         }
 
         setTabCount(tabAll, R.string.filter_all, total);
-        setTabCount(tabActive, R.string.filter_active, active);
-        setTabCount(tabAssigned, R.string.filter_assigned, assigned);
-        setTabCount(tabAccepted, R.string.filter_accepted, accepted);
-        setTabCount(tabInProgress, R.string.filter_in_progress, inProgress);
-        setTabCount(tabUnderApproval, R.string.filter_under_approval, underApproval);
+        setTabCount(tabRevisions, R.string.filter_revisions, revisions);
         setTabCount(tabCompleted, R.string.filter_completed, completed);
         setTabCount(tabCancelled, R.string.filter_cancelled, cancelled);
     }

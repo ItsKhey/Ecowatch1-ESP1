@@ -14,6 +14,7 @@
     <string name="filter_under_approval">Naghihintay ng Aprubasyon</string>
     <string name="filter_completed">Tapos na</string>
     <string name="filter_cancelled">Kinansela</string>
+    <string name="filter_revisions">Rebisyon</string>
     <string name="tasks_empty">Wala pang gawain na ipapakita dito.</string>
     <string name="tasks_empty_active">Wala kang aktibong gawain sa ngayon.</string>
     <string name="tasks_empty_for_approval">Wala pang naghihintay ng aprubasyon.</string>
@@ -37,6 +38,7 @@
     <string name="history_assigned_format">Itinalaga %1$s</string>
     <string name="history_accepted_format">Tinatanggap %1$s</string>
     <string name="history_started_format">Sinimulan %1$s</string>
+    <string name="history_revision_started_format">Sinimulan ang rebisyon %1$s</string>
     <string name="history_completed_format">Tapos na %1$s</string>
     <string name="history_report_format">Ulat %1$s</string>
 

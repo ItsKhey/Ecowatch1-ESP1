@@ -88,6 +88,10 @@ public class TaskHistoryAdapter extends RecyclerView.Adapter<TaskHistoryAdapter.
         bindMilestone(holder.assignedAt, entry.assignedAt, R.string.history_assigned_format);
         bindMilestone(holder.acceptedAt, entry.acceptedAt, R.string.history_accepted_format);
         bindMilestone(holder.startedAt, entry.startedAt, R.string.history_started_format);
+        // Shown only when this row counts as a revision; older saved rows have
+        // no timestamp and stay hidden.
+        bindMilestone(holder.revisionStartedAt, isRevision(entry)
+                ? entry.revisionRequestedAt : null, R.string.history_revision_started_format);
         bindMilestone(holder.completedAt, entry.completedAt, R.string.history_completed_format);
 
         setOptional(holder.notes, entry.completionNotes);
@@ -148,13 +152,24 @@ public class TaskHistoryAdapter extends RecyclerView.Adapter<TaskHistoryAdapter.
      * in {@link TaskStatusRules} so this screen and the tasks tab agree.
      */
     private static String statusLabel(TaskHistoryEntity entry) {
+        if (isRevision(entry)) {
+            return "Revision";
+        }
         if (TaskStatusRules.isAwaitingApproval(entry.status, entry.reportStatus)) {
             return "Under Approval";
         }
         return TaskStatusRules.label(entry.status);
     }
 
+    private static boolean isRevision(TaskHistoryEntity entry) {
+        return entry.revisionRequested
+                || TaskStatusRules.isRevision(entry.status, entry.reportStatus);
+    }
+
     private static int statusColor(TaskHistoryEntity entry) {
+        if (isRevision(entry)) {
+            return Color.parseColor("#EF6C00");
+        }
         if (entry.status == null) return Color.parseColor("#607D8B");
         switch (entry.status) {
             case PersonnelTask.STATUS_ASSIGNED:
@@ -194,6 +209,7 @@ public class TaskHistoryAdapter extends RecyclerView.Adapter<TaskHistoryAdapter.
         final TextView assignedAt;
         final TextView acceptedAt;
         final TextView startedAt;
+        final TextView revisionStartedAt;
         final TextView completedAt;
         final TextView notes;
         final TextView evidenceCount;
@@ -210,6 +226,7 @@ public class TaskHistoryAdapter extends RecyclerView.Adapter<TaskHistoryAdapter.
             assignedAt = itemView.findViewById(R.id.historyAssignedAt);
             acceptedAt = itemView.findViewById(R.id.historyAcceptedAt);
             startedAt = itemView.findViewById(R.id.historyStartedAt);
+            revisionStartedAt = itemView.findViewById(R.id.historyRevisionStartedAt);
             completedAt = itemView.findViewById(R.id.historyCompletedAt);
             notes = itemView.findViewById(R.id.historyNotes);
             evidenceCount = itemView.findViewById(R.id.historyEvidenceCount);

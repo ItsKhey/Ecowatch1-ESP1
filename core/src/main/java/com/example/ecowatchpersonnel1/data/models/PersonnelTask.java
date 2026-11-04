@@ -36,6 +36,14 @@ public class PersonnelTask {
     public boolean isTeamLeader;
 
     /**
+     * True while the current assignment cycle includes an administrator
+     * revision. Boxed so an older server that sends only the report timeline
+     * falls through to {@link #latestRevisionAt()}.
+     */
+    @SerializedName(value = "revisionRequested", alternate = {"revision_requested"})
+    public Boolean revisionRequested;
+
+    /**
      * How big the job is, as the server spells it: "Small-Scale Waste",
      * "Medium-Scale Waste" or "Large-Scale Waste".
      *
@@ -140,6 +148,47 @@ public class PersonnelTask {
         }
         if (!isCompleted() || report == null || report.status == null) return false;
         return REPORT_STATUS_UNDER_REVIEW.equalsIgnoreCase(report.status.trim());
+    }
+
+    /**
+     * True when this assignment was sent back for revision.
+     *
+     * <p>Prefers the server's current-cycle flag. When an older server sends no
+     * flag, the presence of a revision event on the report timeline is the best
+     * evidence available.
+     */
+    public boolean isRevisionRequested() {
+        if (revisionRequested != null) return revisionRequested;
+        if (report != null && report.revisionRequested != null) {
+            return report.revisionRequested;
+        }
+        return latestRevisionAt() != null;
+    }
+
+    /**
+     * The timestamp of the most recent revision request, or null.
+     *
+     * <p>Read from the report timeline so the detail screen can say when the
+     * work was sent back instead of leaving it to the notification that has
+     * already been dismissed.
+     */
+    public String latestRevisionAt() {
+        if (report == null || report.timeline == null) return null;
+
+        String latest = null;
+        for (TaskTimelineEvent event : report.timeline) {
+            if (event == null
+                    || !"REVISION_REQUESTED".equalsIgnoreCase(event.action)
+                    || event.timestamp == null
+                    || event.timestamp.trim().isEmpty()) {
+                continue;
+            }
+            String timestamp = event.timestamp.trim();
+            if (latest == null || timestamp.compareTo(latest) >= 0) {
+                latest = timestamp;
+            }
+        }
+        return latest;
     }
 
     public String reportTitle() {

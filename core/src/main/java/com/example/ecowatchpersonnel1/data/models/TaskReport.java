@@ -1,5 +1,10 @@
 package com.example.ecowatchpersonnel1.data.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The resident report a task is cleaning, flattened by the backend into the
  * assignment payload so the app never has to make a second call.
@@ -31,6 +36,23 @@ public class TaskReport {
     public String clusterId;
     public String createdAt;
     public String resolvedAt;
+
+    /**
+     * True while this assignment cycle includes an administrator revision.
+     *
+     * <p>Boxed rather than primitive so "the server did not say" can be told
+     * apart from an explicit false, which matters for older servers that send
+     * only the timeline.
+     */
+    @SerializedName(value = "revisionRequested", alternate = {"revision_requested"})
+    public Boolean revisionRequested;
+
+    /**
+     * The cleaning lifecycle for this task, oldest first. Only the personnel
+     * response carries it, and only the detail screen and the history filter
+     * read it.
+     */
+    public List<TaskTimelineEvent> timeline = new ArrayList<>();
     /**
      * The size the resident filed the report under, as the server spells it.
      *

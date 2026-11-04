@@ -18,6 +18,7 @@
     <string name="filter_under_approval">Under Approval</string>
     <string name="filter_completed">Completed</string>
     <string name="filter_cancelled">Cancelled</string>
+    <string name="filter_revisions">Revisions</string>
     <string name="tasks_empty_for_approval">Nothing is waiting for approval right now.</string>
     <!-- Chip label plus the number of tasks behind it, e.g. "Under Approval (2)". -->
     <!-- Chip label plus the number of tasks behind it, e.g. "Under Approval (2)".
@@ -40,6 +41,7 @@
     <string name="history_assigned_format">Assigned %1$s</string>
     <string name="history_accepted_format">Accepted %1$s</string>
     <string name="history_started_format">Started %1$s</string>
+    <string name="history_revision_started_format">Revision Started %1$s</string>
     <string name="history_completed_format">Completed %1$s</string>
     <string name="history_report_format">Report %1$s</string>
 

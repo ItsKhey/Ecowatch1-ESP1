@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import com.example.ecowatchpersonnel1.data.local.TaskHistoryEntity;
 import com.example.ecowatchpersonnel1.data.models.PersonnelTask;
 import com.example.ecowatchpersonnel1.data.models.TaskReport;
+import com.example.ecowatchpersonnel1.data.models.TaskTimelineEvent;
 
 import org.junit.Test;
 
@@ -106,6 +107,54 @@ public class TaskHistoryEntityTest {
         TaskHistoryEntity row = TaskHistoryEntity.from(task, "PERS-0004");
 
         assertEquals("", row.assignmentId);
+    }
+
+    @Test
+    public void revisionFlagAndTimestampAreSaved() {
+        // The history tab filters on the saved flag, and the row prints the
+        // timestamp. Both come from the report timeline rather than a status,
+        // because a revised task is IN_PROGRESS again and looks brand new.
+        PersonnelTask task = new PersonnelTask();
+        task.assignmentId = "PERS-0006";
+        task.status = PersonnelTask.STATUS_COMPLETED;
+
+        TaskTimelineEvent older = new TaskTimelineEvent();
+        older.action = "REVISION_REQUESTED";
+        older.timestamp = "2026-03-02T08:00:00.000Z";
+
+        TaskTimelineEvent latest = new TaskTimelineEvent();
+        latest.action = "REVISION_REQUESTED";
+        latest.timestamp = "2026-03-03T09:30:00.000Z";
+
+        TaskReport report = new TaskReport();
+        report.timeline.add(older);
+        report.timeline.add(latest);
+        task.report = report;
+
+        TaskHistoryEntity row = TaskHistoryEntity.from(task, "PERS-0006");
+
+        assertTrue(row.revisionRequested);
+        assertEquals("2026-03-03T09:30:00.000Z", row.revisionRequestedAt);
+    }
+
+    @Test
+    public void taskWithoutRevisionEventsIsNotFlagged() {
+        PersonnelTask task = new PersonnelTask();
+        task.assignmentId = "PERS-0007";
+        task.status = PersonnelTask.STATUS_COMPLETED;
+
+        TaskTimelineEvent completed = new TaskTimelineEvent();
+        completed.action = "COMPLETED";
+        completed.timestamp = "2026-03-03T09:30:00.000Z";
+
+        TaskReport report = new TaskReport();
+        report.timeline.add(completed);
+        task.report = report;
+
+        TaskHistoryEntity row = TaskHistoryEntity.from(task, "PERS-0007");
+
+        assertTrue(!row.revisionRequested);
+        assertNull(row.revisionRequestedAt);
     }
 
     @Test

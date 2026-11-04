@@ -125,6 +125,7 @@ public class TaskDetailActivity extends AppCompatActivity implements OnMapReadyC
     private LinearLayout vehicleCardRow;
     private TextView timelineAccepted;
     private TextView timelineStarted;
+    private TextView timelineRevisions;
     private TextView timelineCompleted;
     private TextView timelineNotes;
     private View adminNoteCard;
@@ -231,6 +232,7 @@ public class TaskDetailActivity extends AppCompatActivity implements OnMapReadyC
         vehicleCardRow = findViewById(R.id.vehicleCardRow);
         timelineAccepted = findViewById(R.id.timelineAccepted);
         timelineStarted = findViewById(R.id.timelineStarted);
+        timelineRevisions = findViewById(R.id.timelineRevisions);
         timelineCompleted = findViewById(R.id.timelineCompleted);
         timelineNotes = findViewById(R.id.timelineNotes);
         adminNoteCard = findViewById(R.id.adminNoteCard);
@@ -671,6 +673,7 @@ public class TaskDetailActivity extends AppCompatActivity implements OnMapReadyC
     private void renderTimeline(PersonnelTask task) {
         setOrHide(timelineAccepted, "Accepted", task.acceptedAt);
         setOrHide(timelineStarted, "Started", task.startedAt);
+        setOrHide(timelineRevisions, "Revision Started", task.latestRevisionAt());
         setOrHide(timelineCompleted, "Completed", task.completedAt);
 
         if (notBlank(task.completionNotes)) {

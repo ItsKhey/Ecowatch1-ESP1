@@ -1,5 +1,7 @@
 package com.example.ecowatchpersonnel1.data.models;
 
+import java.util.Locale;
+
 /**
  * The status rules shared by the tasks list and the task history.
  *
@@ -19,6 +21,9 @@ public final class TaskStatusRules {
     /** The report status an admin leaves while reviewing a cleaner finished a task. */
     private static final String REPORT_STATUS_UNDER_REVIEW = "Under Review";
 
+    /** The word the server uses when work is sent back for another pass. */
+    private static final String REVISION = "revis";
+
     private TaskStatusRules() {
     }
 
@@ -27,6 +32,21 @@ public final class TaskStatusRules {
         return PersonnelTask.STATUS_ASSIGNED.equals(status)
                 || PersonnelTask.STATUS_ACCEPTED.equals(status)
                 || PersonnelTask.STATUS_IN_PROGRESS.equals(status);
+    }
+
+    /**
+     * True when the assignment or its report has been sent back for revision.
+     *
+     * <p>The backend does not use one fixed spelling for this, and the state can
+     * arrive on either the assignment status or the report status, so both are
+     * checked for the word rather than compared to a single constant.
+     */
+    public static boolean isRevision(String assignmentStatus, String reportStatus) {
+        return mentionsRevision(assignmentStatus) || mentionsRevision(reportStatus);
+    }
+
+    private static boolean mentionsRevision(String value) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(REVISION);
     }
 
     /**

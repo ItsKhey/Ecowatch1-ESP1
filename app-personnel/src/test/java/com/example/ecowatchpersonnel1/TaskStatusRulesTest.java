@@ -71,6 +71,27 @@ public class TaskStatusRulesTest {
     }
 
     @Test
+    public void revisionIsDetectedOnEitherStatus() {
+        assertTrue(TaskStatusRules.isRevision("REVISION", null));
+        assertTrue(TaskStatusRules.isRevision("FOR_REVISION", null));
+        assertTrue(TaskStatusRules.isRevision(
+                PersonnelTask.STATUS_COMPLETED, "Needs Revision"));
+    }
+
+    @Test
+    public void revisionCheckIgnoresCaseAndPadding() {
+        assertTrue(TaskStatusRules.isRevision("  needs revision  ", null));
+        assertTrue(TaskStatusRules.isRevision(null, " for revision "));
+    }
+
+    @Test
+    public void ordinaryStatusesAreNotRevisions() {
+        assertFalse(TaskStatusRules.isRevision(PersonnelTask.STATUS_COMPLETED, "Under Review"));
+        assertFalse(TaskStatusRules.isRevision(PersonnelTask.STATUS_IN_PROGRESS, "Resolved"));
+        assertFalse(TaskStatusRules.isRevision(null, null));
+    }
+
+    @Test
     public void labelsCoverEveryServerStatus() {
         assertEquals("Assigned", TaskStatusRules.label(PersonnelTask.STATUS_ASSIGNED));
         assertEquals("Accepted", TaskStatusRules.label(PersonnelTask.STATUS_ACCEPTED));
