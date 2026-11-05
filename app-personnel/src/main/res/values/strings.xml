@@ -71,6 +71,8 @@
     <string name="security_confirm">Confirm</string>
     <string name="security_register_message">Scan your fingerprint to register it for this account.</string>
     <string name="security_fingerprint_login">Sign in with fingerprint</string>
+    <string name="security_fingerprint_ready">Fingerprint login</string>
+    <string name="security_fingerprint_setup_needed">Fingerprint needs setup</string>
     <string name="security_fingerprint_login_title">Fingerprint Login</string>
     <string name="security_fingerprint_login_subtitle">Confirm your fingerprint to open EcoWatch Personnel.</string>
     <string name="security_fingerprint_login_for">Signing in as %1$s. Confirm your fingerprint.</string>

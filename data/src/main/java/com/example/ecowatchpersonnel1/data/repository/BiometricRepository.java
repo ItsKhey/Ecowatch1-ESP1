@@ -178,6 +178,22 @@ public class BiometricRepository {
         });
     }
 
+    /**
+     * Refreshes the display name on an existing registration.
+     *
+     * <p>Called after a password login, which is the moment the real username is
+     * known. It only touches a row that already exists, so it can never create a
+     * registration for an account that never opted in.
+     */
+    public void updateUsername(@Nullable String personnelId, @Nullable String username) {
+        final String key = keyOf(personnelId);
+        final String name = username == null ? "" : username.trim();
+        if (key.isEmpty() || name.isEmpty()) return;
+
+        IO_EXECUTOR.execute(() ->
+                dao.updateUsername(key, name, System.currentTimeMillis()));
+    }
+
     /** Forgets an account completely, used when its account is removed from the device. */
     public void forget(@Nullable String personnelId) {
         final String key = keyOf(personnelId);

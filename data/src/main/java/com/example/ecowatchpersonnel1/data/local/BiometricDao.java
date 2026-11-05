@@ -64,6 +64,18 @@ public interface BiometricDao {
             + "WHERE personnelId = :personnelId")
     void setEnabled(String personnelId, boolean enabled, long updatedAt);
 
+    /**
+     * Repairs the display name on an existing row.
+     *
+     * <p>Older builds could write the personnel id here after a fingerprint login.
+     * The row still worked, but the login chooser saw it as a different account and
+     * showed two rows with the tag on the wrong one. A password login knows the real
+     * username, so it refreshes the row in place.
+     */
+    @Query("UPDATE biometric_settings SET username = :username, updatedAt = :updatedAt "
+            + "WHERE personnelId = :personnelId")
+    void updateUsername(String personnelId, String username, long updatedAt);
+
     /** Forgets one account entirely, used when it is removed from the device. */
     @Query("DELETE FROM biometric_settings WHERE personnelId = :personnelId")
     void delete(String personnelId);

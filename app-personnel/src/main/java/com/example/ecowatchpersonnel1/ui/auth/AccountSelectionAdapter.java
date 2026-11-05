@@ -1,6 +1,8 @@
 package com.example.ecowatchpersonnel1.ui.auth;
 
 import com.example.ecowatchpersonnel1.R;
+import com.example.ecowatchpersonnel1.data.local.BiometricSetting;
+import com.example.ecowatchpersonnel1.utils.BiometricTokenVault;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -49,8 +51,10 @@ public class AccountSelectionAdapter extends RecyclerView.Adapter<AccountSelecti
         // Add biometric accounts first
         if (biometricSettings != null) {
             for (Object setting : biometricSettings) {
-                // If setting stores username, adjust getter call accordingly
-                items.add(new AccountRow("", setting));
+                if (setting instanceof BiometricSetting) {
+                    items.add(new AccountRow(
+                            ((BiometricSetting) setting).displayUsername(), setting));
+                }
             }
         }
 
@@ -76,9 +80,14 @@ public class AccountSelectionAdapter extends RecyclerView.Adapter<AccountSelecti
         AccountRow row = items.get(position);
         holder.tvEmail.setText(row.username);
 
-        if (row.setting != null) {
-            // Fingerprint / Biometric row
-            holder.tvAccountTag.setText("Fingerprint login");
+        if (row.setting instanceof BiometricSetting) {
+            // Fingerprint row: the tag must say whether this account can actually
+            // be opened right now, not just whether it once opted in.
+            BiometricSetting setting = (BiometricSetting) row.setting;
+            boolean ready = BiometricTokenVault.hasStoredSession(context, setting.personnelId);
+            holder.tvAccountTag.setText(ready
+                    ? R.string.security_fingerprint_ready
+                    : R.string.security_fingerprint_setup_needed);
             holder.tvAccountTag.setVisibility(View.VISIBLE);
             holder.tvRemoveAccount.setVisibility(View.GONE);
         } else {
