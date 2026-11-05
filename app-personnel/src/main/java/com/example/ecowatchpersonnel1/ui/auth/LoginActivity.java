@@ -152,6 +152,10 @@ public class LoginActivity extends AppCompatActivity {
             if (personnel == null) return;
             SavedAccounts.remember(this, personnel.username);
             sessionManager.rememberUsername(personnel.username);
+            // Heal a stale biometric row from an older build whose username was
+            // overwritten with the personnel id, so the account chooser keeps one
+            // row per person and the fingerprint tag lands on the right one.
+            biometricRepository.updateUsername(personnel.personnelId, personnel.username);
             FcmTokenSyncScheduler.syncCurrentToken(this);
             Toast.makeText(this, "Welcome, " + personnel.displayName(), Toast.LENGTH_SHORT).show();
 
@@ -162,15 +166,32 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Re-checks fingerprint availability whenever the screen comes back.
+     *
+     * <p>The account chooser can stay open while the vault changes underneath it
+     * (a failed unlock discards a dead entry, for example). Reading the vault and
+     * the database again on resume keeps the tag on each row honest instead of
+     * showing a stale "Fingerprint login" label.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (biometricLoginLayout != null) {
+            showBiometricButton(hasRegisteredFingerprint);
+        }
+        refreshAccountSelectionRows();
+    }
+
     // ------------------------------------------------------------ fingerprint ---
 
     /**
-     * True when there is a session and a registration this device can use.
+     * True when there is a registration this device can use, plus either a session
+     * to reopen or a sealed token to unlock into one.
      *
-     * <p>Both halves matter. The row proves an account registered a fingerprint;
-     * the token proves there is a session for it to open. A button that scans
-     * successfully and then lands on nothing is worse than no button at all. The
-     * token read is preferences, so this is safe to call from the main thread.
+     * <p>The row proves an account registered a fingerprint; the token proves there
+     * is something for the scan to open. The token read is preferences, so this is
+     * safe to call from the main thread.
      */
     private boolean canUseFingerprintLogin() {
         return FingerprintEntryPolicy.shouldShowButton(
@@ -238,18 +259,24 @@ public class LoginActivity extends AppCompatActivity {
         if (accountDialog == null || accountAdapter == null) return;
         LinkedHashMap<String, AccountEntry> merged = new LinkedHashMap<>();
         for (String username : SavedAccounts.usernames(this)) {
-            addAccount(merged, new AccountEntry(username, null, false));
+            addAccount(merged, new AccountEntry(username, null, false, false));
         }
         for (BiometricSetting setting : registeredBiometricAccounts) {
             if (setting == null) continue;
             String username = setting.displayUsername();
-            AccountEntry entry = new AccountEntry(username, setting.personnelId, true);
+            // Ready means the database row exists AND this account still has a
+            // token the current keystore key can open. That is the difference
+            // between "fingerprint enabled" and "fingerprint will actually work".
+            boolean vaultReady = BiometricTokenVault.hasStoredSession(this, setting.personnelId);
+            AccountEntry entry = new AccountEntry(username, setting.personnelId, true, vaultReady);
             String key = accountKey(username);
             AccountEntry existing = merged.get(key);
-            if (existing == null) merged.put(key, entry);
-            else {
+            if (existing == null) {
+                merged.put(key, entry);
+            } else {
                 existing.fingerprint = true;
                 existing.personnelId = setting.personnelId;
+                existing.vaultReady = vaultReady;
             }
         }
         List<AccountEntry> rows = new ArrayList<>(merged.values());
@@ -279,10 +306,14 @@ public class LoginActivity extends AppCompatActivity {
     private void selectAccount(AccountEntry account) {
         if (accountDialog != null) accountDialog.dismiss();
         if (account.fingerprint) {
+            // Re-check the vault instead of trusting the cached tag: an entry can
+            // be discarded between the dialog opening and the tap, and each account
+            // owns its own entry now.
             if (BiometricTokenVault.hasStoredSession(this, account.personnelId)) {
                 usernameInput.setText(account.username);
-                restoreSessionFromVault();
+                restoreSessionFromVault(account.personnelId, account.username);
             } else {
+                refreshAccountSelectionRows();
                 prefillUsername(account.username);
                 Toast.makeText(this,
                         "Fingerprint sign-in needs to be set up again. Sign in with your password.",
@@ -321,9 +352,10 @@ public class LoginActivity extends AppCompatActivity {
                 && account.username.equalsIgnoreCase(sessionManager.fetchUsername())) {
             sessionManager.clearSession();
         }
-        String vaultUsername = BiometricTokenVault.storedUsername(this);
-        if (vaultUsername != null && account.username.equalsIgnoreCase(vaultUsername)) {
-            BiometricTokenVault.clear(this);
+        // Forget only this account's sealed token. Other accounts on the same
+        // device keep theirs.
+        if (account.personnelId != null && !account.personnelId.trim().isEmpty()) {
+            BiometricTokenVault.clear(this, account.personnelId);
         }
         refreshAccountSelectionRows();
     }
@@ -344,7 +376,10 @@ public class LoginActivity extends AppCompatActivity {
         int availability = BiometricManager.from(this)
                 .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG);
 
-        boolean usable = canUse && availability == BiometricManager.BIOMETRIC_SUCCESS;
+        // canUse is the caller's veto (a failed unlock passes false); the policy
+        // still has to agree that there is something worth opening.
+        boolean usable = canUse && canUseFingerprintLogin()
+                && availability == BiometricManager.BIOMETRIC_SUCCESS;
 
         biometricLoginLayout.setVisibility(usable ? View.VISIBLE : View.GONE);
     }
@@ -360,14 +395,26 @@ public class LoginActivity extends AppCompatActivity {
      * cleaner falls back to the password form rather than being offered a button
      * that can never work.
      */
-    private void restoreSessionFromVault() {
-        final Cipher openingCipher = BiometricTokenVault.createOpeningCipher(this);
+    private void restoreSessionFromVault(String personnelId, String username) {
+        if (personnelId == null || personnelId.trim().isEmpty()) {
+            Toast.makeText(this, "Sign in with your password first.", Toast.LENGTH_SHORT).show();
+            showBiometricButton(false);
+            return;
+        }
+
+        final String accountId = personnelId.trim();
+        final String accountUsername = username;
+        final Cipher openingCipher =
+                BiometricTokenVault.createOpeningCipher(this, accountId);
 
         if (openingCipher == null) {
-            BiometricTokenVault.discardUnopenable(this);
+            // A dead key has already been cleared device-wide; a bad entry is
+            // dropped for this account only, leaving the others intact.
+            BiometricTokenVault.discardUnopenable(this, accountId);
             Toast.makeText(this, "Your fingerprint changed. Sign in with your password.",
                     Toast.LENGTH_LONG).show();
-            observeRegistrations();
+            showBiometricButton(hasRegisteredFingerprint);
+            refreshAccountSelectionRows();
             return;
         }
 
@@ -381,24 +428,29 @@ public class LoginActivity extends AppCompatActivity {
                         biometricPromptShowing = false;
 
                         String token = BiometricTokenVault.open(LoginActivity.this,
-                                openingCipher);
-                        String personnelId = BiometricTokenVault.storedPersonnelId(
-                                LoginActivity.this);
+                                openingCipher, accountId);
 
-                        if (token == null || personnelId == null
-                                || personnelId.trim().isEmpty()) {
-                            // The scan succeeded but the token would not open. The
-                            // keystore says this device should be able to, so treat
-                            // it as unrecoverable rather than retrying forever.
-                            BiometricTokenVault.discardUnopenable(LoginActivity.this);
+                        if (token == null) {
+                            // The scan succeeded but this account's token would not
+                            // open. Drop that one entry rather than retrying forever.
+                            BiometricTokenVault.discardUnopenable(LoginActivity.this, accountId);
                             Toast.makeText(LoginActivity.this,
                                     "Could not unlock this account. Sign in with your password.",
                                     Toast.LENGTH_LONG).show();
-                            showBiometricButton(false);
+                            showBiometricButton(hasRegisteredFingerprint);
+                            refreshAccountSelectionRows();
                             return;
                         }
 
-                        sessionManager.saveSession(token, personnelId.trim());
+                        sessionManager.saveSession(token, accountId);
+                        // Keep the real username with the session. saveSession
+                        // deliberately does not write the username, so a fingerprint
+                        // login cannot make the chooser see a second, id-named row
+                        // for the same person.
+                        if (accountUsername != null && !accountUsername.trim().isEmpty()) {
+                            sessionManager.rememberUsername(accountUsername);
+                            SavedAccounts.remember(LoginActivity.this, accountUsername);
+                        }
                         Toast.makeText(LoginActivity.this,
                                 R.string.toast_biometric_login_success, Toast.LENGTH_SHORT).show();
                         FcmTokenSyncScheduler.syncCurrentToken(LoginActivity.this);
@@ -421,7 +473,7 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .authenticate(new BiometricPrompt.PromptInfo.Builder()
                         .setTitle(getString(R.string.security_fingerprint_login_title))
-                        .setSubtitle(vaultAccountSubtitle())
+                        .setSubtitle(vaultAccountSubtitle(accountId, accountUsername))
                         .setNegativeButtonText(getString(android.R.string.cancel))
                         .setAllowedAuthenticators(
                                 BiometricManager.Authenticators.BIOMETRIC_STRONG)
@@ -432,108 +484,18 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Names the account the scan will open.
      *
-     * <p>Worth saying out loud: the vault holds one account, and on a shared phone
-     * a cleaner tapping this needs to know it is opening their own.
+     * <p>On a shared phone a cleaner tapping this needs to know it is opening
+     * their own account, not somebody else's.
      */
-    private String vaultAccountSubtitle() {
-        String username = BiometricTokenVault.storedUsername(this);
+    private String vaultAccountSubtitle(String personnelId, String fallbackUsername) {
+        String username = BiometricTokenVault.storedUsername(this, personnelId);
+        if (username == null || username.trim().isEmpty()) {
+            username = fallbackUsername;
+        }
         if (username != null && !username.trim().isEmpty()) {
             return getString(R.string.security_fingerprint_login_for, username.trim());
         }
         return getString(R.string.security_fingerprint_login_subtitle);
-    }
-
-    /**
-     * Unlocks the session that is already on this device.
-     *
-     * <p>No credentials are involved: the fingerprint only proves who is holding
-     * the phone, and the token was stored when the cleaner last signed in with
-     * their password. That is why this app can offer fingerprint entry without
-     * ever saving a password, unlike the resident app which keeps one.
-     */
-    private void handleBiometricLogin() {
-        if (biometricPromptShowing) return;
-
-        if (!canUseFingerprintLogin()) {
-            Toast.makeText(this, "Sign in with your password first.", Toast.LENGTH_SHORT).show();
-            showBiometricButton(false);
-            return;
-        }
-
-        // Only after a sign-out is there a sealed token to open. With a live
-        // session the plain prompt below is enough, and this avoids a keystore
-        // round trip on every unlock.
-        if (FingerprintEntryPolicy.needsVaultUnlock(sessionManager.isLoggedIn(),
-                BiometricTokenVault.hasStoredSession(this, null))) {
-            restoreSessionFromVault();
-            return;
-        }
-
-        int availability = BiometricManager.from(this)
-                .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG);
-        if (availability != BiometricManager.BIOMETRIC_SUCCESS) {
-            // A fingerprint that stopped registering must not lock the cleaner
-            // out, so the button steps aside and the password form stays. The row
-            // is left alone: turning the sensor back on should not cost the
-            // cleaner their password prompt all over again.
-            Toast.makeText(this, biometricUnavailableMessage(availability),
-                    Toast.LENGTH_LONG).show();
-            showBiometricButton(false);
-            return;
-        }
-
-        biometricPromptShowing = true;
-        new BiometricPrompt(this, ContextCompat.getMainExecutor(this),
-                new BiometricPrompt.AuthenticationCallback() {
-                    @Override
-                    public void onAuthenticationSucceeded(
-                            @NonNull BiometricPrompt.AuthenticationResult result) {
-                        super.onAuthenticationSucceeded(result);
-                        biometricPromptShowing = false;
-                        // The scan itself is the login. Nothing downstream asks
-                        // again, so there is no pass to hand to the dashboard.
-                        Toast.makeText(LoginActivity.this,
-                                R.string.toast_biometric_login_success, Toast.LENGTH_SHORT).show();
-                        FcmTokenSyncScheduler.syncCurrentToken(LoginActivity.this);
-                        startDashboard();
-                    }
-
-                    @Override
-                    public void onAuthenticationError(int errorCode,
-                                                     @NonNull CharSequence errString) {
-                        super.onAuthenticationError(errorCode, errString);
-                        biometricPromptShowing = false;
-                        // Cancelling is a normal choice: stay on the form with no
-                        // complaint. A real failure is worth reporting.
-                        boolean cancelled = errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
-                                || errorCode == BiometricPrompt.ERROR_USER_CANCELED
-                                || errorCode == BiometricPrompt.ERROR_CANCELED;
-                        if (!cancelled) {
-                            Toast.makeText(LoginActivity.this, errString,
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                })
-                .authenticate(new BiometricPrompt.PromptInfo.Builder()
-                        .setTitle(getString(R.string.security_fingerprint_login_title))
-                        .setSubtitle(getString(R.string.security_fingerprint_login_subtitle))
-                        .setNegativeButtonText(getString(android.R.string.cancel))
-                        .setAllowedAuthenticators(
-                                BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                        .build());
-    }
-
-    /** Says why the button is unavailable, in terms the cleaner can act on. */
-    private String biometricUnavailableMessage(int availability) {
-        if (availability == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
-            return "No fingerprint is registered on this device. Sign in with your "
-                    + "password and turn the fingerprint option back on in Settings.";
-        }
-        if (availability == BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE) {
-            return "The fingerprint sensor is busy. Try again, or sign in with your "
-                    + "password.";
-        }
-        return "This device cannot use fingerprint login. Sign in with your password.";
     }
 
     private void attemptLogin() {
@@ -678,11 +640,15 @@ public class LoginActivity extends AppCompatActivity {
         final String username;
         String personnelId;
         boolean fingerprint;
+        /** True when this account's sealed token is present and can be offered. */
+        boolean vaultReady;
 
-        AccountEntry(String username, String personnelId, boolean fingerprint) {
+        AccountEntry(String username, String personnelId, boolean fingerprint,
+                     boolean vaultReady) {
             this.username = username == null ? "" : username.trim();
             this.personnelId = personnelId;
             this.fingerprint = fingerprint;
+            this.vaultReady = vaultReady;
         }
     }
 
@@ -708,10 +674,18 @@ public class LoginActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull AccountViewHolder holder, int position) {
             AccountEntry account = accounts.get(position);
             holder.email.setText(account.username);
-            holder.accountTag.setVisibility(account.fingerprint ? View.VISIBLE : View.GONE);
+            if (account.fingerprint) {
+                holder.accountTag.setVisibility(View.VISIBLE);
+                holder.accountTag.setText(account.vaultReady
+                        ? R.string.security_fingerprint_ready
+                        : R.string.security_fingerprint_setup_needed);
+            } else {
+                holder.accountTag.setVisibility(View.GONE);
+            }
             holder.itemView.setOnClickListener(v -> selectAccount(account));
             holder.itemView.setContentDescription(account.fingerprint
-                    ? account.username + ", fingerprint account"
+                    ? account.username + ", "
+                    + (account.vaultReady ? "fingerprint account" : "fingerprint setup needed")
                     : account.username);
             holder.removeAccount.setVisibility(account.fingerprint ? View.GONE : View.VISIBLE);
             holder.removeAccount.setOnClickListener(v -> confirmRemoveAccount(account));

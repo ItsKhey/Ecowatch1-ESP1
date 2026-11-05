@@ -185,8 +185,10 @@ public class SecurityPrivacyFragment extends Fragment {
         if (fingerprintRegistered) {
             // The sealed token goes with it. Leaving it behind would mean the
             // login screen kept offering an unlock for an account the cleaner
-            // has just turned the lock off for.
-            BiometricTokenVault.clear(requireContext());
+            // has just turned the lock off for. Scope the clear to this account:
+            // another cleaner on the same shared phone may still have a working
+            // fingerprint login.
+            BiometricTokenVault.clear(requireContext(), personnelId);
             biometricRepository.unregister(personnelId, () -> {
                 if (!isAdded()) return;
                 Toast.makeText(requireContext(), R.string.security_biometric_disabled,
@@ -296,7 +298,7 @@ public class SecurityPrivacyFragment extends Fragment {
         // callback and only opened after a later scan. That is what lets the
         // fingerprint restore a session the cleaner has signed out of, rather
         // than only reopening one that is already open.
-        final Cipher sealingCipher = BiometricTokenVault.createSealingCipher();
+        final Cipher sealingCipher = BiometricTokenVault.createSealingCipher(requireContext());
 
         promptShowing = true;
         new BiometricPrompt(this, ContextCompat.getMainExecutor(requireContext()),

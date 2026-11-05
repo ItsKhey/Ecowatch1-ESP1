@@ -91,6 +91,8 @@
     <string name="security_confirm">Kumpirmahin</string>
     <string name="security_register_message">I-scan ang iyong fingerprint para parehistro ito para sa account na ito.</string>
     <string name="security_fingerprint_login">Mag-sign in gamit ang fingerprint</string>
+    <string name="security_fingerprint_ready">Fingerprint login</string>
+    <string name="security_fingerprint_setup_needed">Kailangang i-set up ang fingerprint</string>
     <string name="security_fingerprint_login_title">Fingerprint Login</string>
     <string name="security_fingerprint_login_subtitle">Kumpirmahin ang iyong fingerprint para buksan ang EcoWatch Personnel.</string>
     <string name="security_fingerprint_login_for">Nag-sign in bilang %1$s. Kumpirmahin ang iyong fingerprint.</string>

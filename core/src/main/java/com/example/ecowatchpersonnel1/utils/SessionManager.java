@@ -36,10 +36,13 @@ public class SessionManager {
             clearSession();
             return;
         }
+        // The username is written separately by the caller (the login response, or
+        // the account the fingerprint vault opened). Writing the personnel id here
+        // used to overwrite the real username after a fingerprint login, which made
+        // the account chooser treat the same person as two different rows.
         sharedPreferences.edit()
                 .putString(KEY_JWT_TOKEN, token)
                 .putString(KEY_PERSONNEL_ID, personnelId)
-                .putString(KEY_USER_USERNAME, personnelId)
                 .putBoolean(KEY_IS_LOGGED_IN, true)
                 .putLong(KEY_LAST_ACTIVE, System.currentTimeMillis())
                 .commit();
